@@ -120,6 +120,36 @@
   .step h3{font-size:17px;margin:8px 0 9px}
   .step p{color:var(--muted);font-size:14.5px}
 
+  /* feature spotlights */
+  .feature{display:grid;grid-template-columns:1fr 1fr;gap:54px;align-items:center}
+  @media(max-width:920px){.feature{grid-template-columns:1fr;gap:30px}}
+  @media(min-width:921px){.feature.flip .visual{order:-1}}
+  .ftext h2{font-size:clamp(26px,3.4vw,37px);margin-top:12px}
+  .ftext p{color:var(--muted);font-size:16.5px;margin-top:16px}
+  .fbul{list-style:none;margin:24px 0 0;padding:0}
+  .fbul li{font-size:15px;color:var(--text);padding:8px 0 8px 28px;position:relative}
+  .fbul li::before{content:"✓";position:absolute;left:3px;top:8px;color:var(--accent2);font-weight:800}
+  .fbul li span{color:var(--muted)}
+  /* tokenization visual */
+  .tok{padding:24px}
+  .tok-label{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .tok-line{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:13px 14px;margin:9px 0 0;word-break:break-word}
+  .tok-line mark{border-radius:5px;padding:1px 5px;font-weight:600}
+  mark.pii{background:rgba(255,107,107,.16);color:#ffb4b4}
+  mark.tok{background:rgba(62,207,142,.16);color:#9bf0c8}
+  .tok-arrow{font-size:12.5px;color:var(--faint);text-align:center;margin:14px 0}
+  .tok-foot{margin-top:18px;border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:9px;font-size:13px}
+  .tok-foot .routes{color:var(--muted)} .tok-foot .routes b{color:var(--accent2)}
+  .tok-foot .restore{color:var(--faint)}
+  /* search-flow visual */
+  .flow{padding:24px;display:flex;flex-direction:column;gap:13px}
+  .flow-q{font-family:var(--mono);font-size:13.5px;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:13px 14px}
+  .flow-step{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+  .flow-step .n{flex:none;width:22px;height:22px;border-radius:50%;background:rgba(79,156,255,.12);border:1px solid rgba(79,156,255,.3);color:var(--accent);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .ok-tag{margin-left:auto;font-size:11.5px;color:#9bf0c8;border:1px solid rgba(62,207,142,.35);background:rgba(62,207,142,.08);border-radius:999px;padding:2px 9px;font-weight:600}
+  .flow-ans{font-size:13.5px;color:var(--text);background:rgba(62,207,142,.06);border:1px solid rgba(62,207,142,.25);border-radius:10px;padding:12px 14px;margin-top:2px}
+  .flow-note{font-size:12px;color:var(--faint);text-align:center;margin-top:2px}
+
   /* examples */
   .ex{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
   @media(max-width:920px){.ex{grid-template-columns:1fr}}
@@ -287,6 +317,61 @@
       <div class="step rv"><h3>Enforce the boundary</h3><p>Regulated &amp; confidential data is <b>hard-blocked</b> to your boundary. Structurally, fail-closed, tested to zero leaks over a corpus.</p></div>
       <div class="step rv"><h3>Route by capability + cost</h3><p>The cheapest model that clears the quality bar for the task category. Local-first; escalate to cloud only when it actually pays off.</p></div>
       <div class="step rv"><h3>Audit &amp; learn</h3><p>Every decision lands in a SHA-256 hash-chained trail. Flag a bad call and the correction sticks — and survives a restart.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="deidentify">
+  <div class="wrap feature">
+    <div class="ftext rv">
+      <span class="eyebrow">PII tokenization</span>
+      <h2>De-identify in your boundary — and the whole fleet opens up.</h2>
+      <p>Bastion detects PII inside your boundary and swaps it for tokens before a single byte leaves. The model sees <span style="font-family:var(--mono)">[[EMAIL_1]]</span>, never the address — and the real values are rehydrated locally in the response. Because what leaves is scrubbed, the offshore-jurisdiction penalty is waived, so confidential work can route to the cheapest capable model anywhere — not just the local or US-frontier tier.</p>
+      <ul class="fbul">
+        <li>PII never leaves — <span>detect → tokenize → send → rehydrate, all in-boundary</span></li>
+        <li>Unlocks aggressive routing — <span>confidential work becomes eligible for cheap near-frontier models (GLM · Qwen · Kimi)</span></li>
+        <li>Eyeball or hand-edit <span>the tokenized text before anything is sent</span></li>
+        <li>Regulated data is never auto-sent — <span>it stays in your boundary, period</span></li>
+      </ul>
+    </div>
+    <div class="visual rv">
+      <div class="card tok" aria-label="De-identification example">
+        <span class="tok-label">In your boundary</span>
+        <div class="tok-line">Refund <mark class="pii">jane@acme.com</mark> — card <mark class="pii">4111 1111 1111 1111</mark></div>
+        <div class="tok-arrow">↓ de-identified in-boundary · originals stay local</div>
+        <span class="tok-label">Sent to the model</span>
+        <div class="tok-line">Refund <mark class="tok">[[EMAIL_1]]</mark> — card <mark class="tok">[[CARD_1]]</mark></div>
+        <div class="tok-foot">
+          <div class="routes">→ now routable to <b>GLM · Qwen · Kimi</b> — near-frontier quality, offshore penalty waived</div>
+          <div class="restore">← real values restored in your boundary, in the response</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="websearch" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="wrap feature flip">
+    <div class="ftext rv">
+      <span class="eyebrow">Governed web access</span>
+      <h2>Your local model, but it can see the live web.</h2>
+      <p>A local LLM is frozen at its training cutoff — fine for private work, useless for "what shipped this quarter." Bastion gives it governed, in-boundary web access: it runs a self-hosted SearXNG search, fetches and reranks the actual result pages, and answers from fresh sources — without your prompt ever touching a cloud search API. The query itself is classified and egress-governed, so it captures live-data traffic a dumb chatbot would have to hand to a frontier model.</p>
+      <ul class="fbul">
+        <li>Live answers from a local model — <span>no frontier API required to stay current</span></li>
+        <li>In-boundary deep retrieval — <span>fetch · extract · rerank result pages, all on your infra</span></li>
+        <li>Egress governor — <span>public/internal queries leave; confidential/regulated are blocked</span></li>
+        <li>Auto-detects <span>when a prompt actually needs fresh data — no wasted searches</span></li>
+      </ul>
+    </div>
+    <div class="visual rv">
+      <div class="card flow" aria-label="Governed web search flow">
+        <div class="flow-q">"Top open-source vector databases in 2026?"</div>
+        <div class="flow-step"><span class="n">1</span> local model · query classified <span class="ok-tag">public · egress ok</span></div>
+        <div class="flow-step"><span class="n">2</span> in-boundary SearXNG search</div>
+        <div class="flow-step"><span class="n">3</span> fetch · extract · rerank the result pages</div>
+        <div class="flow-ans">→ a grounded answer from fresh sources — your prompt never touched a cloud search API</div>
+        <div class="flow-note">A query carrying confidential or regulated data is blocked from egress and answered locally.</div>
+      </div>
     </div>
   </div>
 </section>
