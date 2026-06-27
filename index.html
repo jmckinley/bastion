@@ -328,25 +328,25 @@
     <div class="calc rv">
       <div class="calc-controls">
         <div class="slider">
-          <label for="s-local">Served by local models <output id="o-local">55%</output></label>
-          <input type="range" id="s-local" min="0" max="90" value="55" aria-label="Share served by local models">
-          <span class="hint">share of all prompts kept in-boundary at ~$0 marginal cost</span>
+          <label for="s-local">Workload eligible for a local LLM <output id="o-local">55%</output></label>
+          <input type="range" id="s-local" min="0" max="100" value="55" aria-label="Workload share eligible for a local LLM">
+          <span class="hint">runs in-boundary at ~$0 marginal cost — never leaves your walls</span>
         </div>
         <div class="slider">
-          <label for="s-fr">Of cloud work, needs a frontier model <output id="o-fr">34%</output></label>
-          <input type="range" id="s-fr" min="0" max="100" value="34" aria-label="Share of cloud work that needs a frontier model">
-          <span class="hint">the genuinely hard prompts; the rest run on cost-efficient cloud</span>
+          <label for="s-non">Workload eligible for non-US frontier models <output id="o-non">39%</output></label>
+          <input type="range" id="s-non" min="0" max="100" value="39" aria-label="Workload share eligible for non-US frontier models">
+          <span class="hint">near-frontier — GLM · Qwen · Kimi (confidential work via de-identification)</span>
         </div>
         <div class="slider">
-          <label for="s-cn">Of frontier work, to near-frontier <output id="o-cn">60%</output></label>
-          <input type="range" id="s-cn" min="0" max="100" value="60" aria-label="Share of frontier work routed to near-frontier models">
-          <span class="hint">GLM · Qwen · Kimi instead of US frontier (confidential work via de-identification)</span>
+          <label for="s-us">Workload demanding US frontier models <output id="o-us">6%</output></label>
+          <input type="range" id="s-us" min="0" max="100" value="6" aria-label="Workload share demanding US frontier models">
+          <span class="hint">the hardest prompts — Claude · Gemini · Grok</span>
         </div>
+        <p class="hint" style="margin:-8px 0 0">The three shares total 100% of your workload — move one and the others rebalance.</p>
         <div class="prices">
           <span class="prices-t">Price $/1M blended tokens (editable)</span>
           <label>local <input type="number" id="p-local" value="0" min="0" step="0.5"></label>
-          <label>cost-efficient <input type="number" id="p-mid" value="2" min="0" step="0.5"></label>
-          <label>near-frontier <input type="number" id="p-cn" value="2.5" min="0" step="0.5"></label>
+          <label>non-US frontier <input type="number" id="p-non" value="2.5" min="0" step="0.5"></label>
           <label>US frontier <input type="number" id="p-us" value="15" min="0" step="0.5"></label>
           <button class="reset" id="calc-reset" type="button">Reset to defaults</button>
         </div>
@@ -355,24 +355,22 @@
         <div class="save-big"><span class="pct grad" id="o-save">88%</span><span class="save-lbl">lower blended cost<br>vs sending everything<br>to a US frontier model</span></div>
         <div class="bars">
           <div class="bar-row"><span class="bar-lbl">All US frontier</span><div class="bar-track"><div class="bar fill-bad" id="bar-base"></div></div><span class="bar-val" id="v-base">$15.00</span></div>
-          <div class="bar-row"><span class="bar-lbl">Bastion blended</span><div class="bar-track"><div class="bar fill-good" id="bar-bast"></div></div><span class="bar-val" id="v-bast">$1.74</span></div>
+          <div class="bar-row"><span class="bar-lbl">Bastion blended</span><div class="bar-track"><div class="bar fill-good" id="bar-bast"></div></div><span class="bar-val" id="v-bast">$1.88</span></div>
         </div>
         <div class="blend">
-          <div class="blend-lbl">Where the spend goes</div>
+          <div class="blend-lbl">Where the workload goes</div>
           <div class="blend-bar" aria-hidden="true">
             <span class="seg seg-local" id="seg-local"></span>
-            <span class="seg seg-mid" id="seg-mid"></span>
-            <span class="seg seg-cn" id="seg-cn"></span>
+            <span class="seg seg-cn" id="seg-non"></span>
             <span class="seg seg-us" id="seg-us"></span>
           </div>
           <div class="blend-legend">
             <span><i class="sw-local"></i>local <b id="l-local">55%</b></span>
-            <span><i class="sw-mid"></i>cost-efficient <b id="l-mid">30%</b></span>
-            <span><i class="sw-cn"></i>near-frontier <b id="l-cn">9%</b></span>
+            <span><i class="sw-cn"></i>non-US frontier <b id="l-non">39%</b></span>
             <span><i class="sw-us"></i>US frontier <b id="l-us">6%</b></span>
           </div>
         </div>
-        <p class="calc-note">Savings are versus a baseline of routing 100% of traffic to a US frontier model at the price above. This is an illustrative model at representative list prices — once Bastion is running, the savings ledger reports the <em>measured</em> number from your real token volumes.</p>
+        <p class="calc-note">Savings are versus a baseline of routing 100% of traffic to a US frontier model at the price above. An illustrative model at representative list prices — once Bastion is running, the savings ledger reports the <em>measured</em> number from your real token volumes.</p>
       </div>
     </div>
   </div>
@@ -638,42 +636,56 @@
     window.addEventListener('load', function(){ setTimeout(function(){ els.forEach(function(e){e.classList.add('in')}); }, 900); });
   })();
 
-  // Interactive cost model — transparent, recomputes live; defaults = the blend we model today.
+  // Interactive cost model — three workload shares (sum to 100%) + editable prices.
   (function(){
     var $ = function(id){ return document.getElementById(id); };
-    var DEFAULTS = { local:55, fr:34, cn:60, pLocal:0, pMid:2, pCn:2.5, pUs:15 };
-    var sLocal=$('s-local'), sFr=$('s-fr'), sCn=$('s-cn');
-    var pLocal=$('p-local'), pMid=$('p-mid'), pCn=$('p-cn'), pUs=$('p-us');
+    var DEFAULTS = { local:55, non:39, us:6, pLocal:0, pNon:2.5, pUs:15 };
+    var sLocal=$('s-local'), sNon=$('s-non'), sUs=$('s-us');
+    var pLocal=$('p-local'), pNon=$('p-non'), pUs=$('p-us');
     if(!sLocal) return;
-    function pct(x){ return Math.round(x*100)+'%'; }
+    var S={ local:sLocal, non:sNon, us:sUs };
     function money(x){ return '$'+(isFinite(x)?x:0).toFixed(2); }
-    function num(el,fallback){ var v=parseFloat(el.value); return isFinite(v)&&v>=0 ? v : fallback; }
+    function num(el,fb){ var v=parseFloat(el.value); return isFinite(v)&&v>=0 ? v : fb; }
+    // Keep the three shares summing to 100: spread the remainder across the other two
+    // in proportion to their current values (split evenly if both are zero).
+    function rebalance(changed){
+      var v={ local:+sLocal.value, non:+sNon.value, us:+sUs.value };
+      var keys=['local','non','us'].filter(function(k){ return k!==changed; });
+      var rem=Math.max(0, 100 - v[changed]);
+      var so=v[keys[0]]+v[keys[1]];
+      if(so===0){ v[keys[0]]=rem/2; v[keys[1]]=rem/2; }
+      else { v[keys[0]]=rem*v[keys[0]]/so; v[keys[1]]=rem*v[keys[1]]/so; }
+      sLocal.value=Math.round(v.local); sNon.value=Math.round(v.non); sUs.value=Math.round(v.us);
+    }
     function calc(){
-      var local=sLocal.value/100, frShare=sFr.value/100, cnShare=sCn.value/100;
-      var P={ local:num(pLocal,0), mid:num(pMid,2), cn:num(pCn,2.5), us:num(pUs,15) };
-      var rem=1-local;
-      var fr=rem*frShare;        // frontier-class share of ALL traffic
-      var mid=rem-fr;            // cost-efficient cloud
-      var cn=fr*cnShare, us=fr*(1-cnShare);
-      var blended = local*P.local + mid*P.mid + cn*P.cn + us*P.us;
+      var raw={ local:+sLocal.value, non:+sNon.value, us:+sUs.value };
+      var tot=raw.local+raw.non+raw.us || 1;
+      var sh={ local:raw.local/tot, non:raw.non/tot, us:raw.us/tot };
+      var P={ local:num(pLocal,0), non:num(pNon,2.5), us:num(pUs,15) };
+      var blended = sh.local*P.local + sh.non*P.non + sh.us*P.us;
       var base = P.us;
       var save = base>0 ? Math.max(0,(base-blended)/base) : 0;
-      $('o-local').textContent=pct(local); $('o-fr').textContent=pct(frShare); $('o-cn').textContent=pct(cnShare);
+      // Display percentages, forced to total exactly 100.
+      var pl=Math.round(sh.local*100), pu=Math.round(sh.us*100), pn=100-pl-pu;
+      $('o-local').textContent=pl+'%'; $('o-non').textContent=pn+'%'; $('o-us').textContent=pu+'%';
+      $('l-local').textContent=pl+'%'; $('l-non').textContent=pn+'%'; $('l-us').textContent=pu+'%';
       $('o-save').textContent=Math.round(save*100)+'%';
       $('v-base').textContent=money(base); $('v-bast').textContent=money(blended);
       var maxv=Math.max(base,blended,0.01);
       $('bar-base').style.width=(base/maxv*100)+'%';
       $('bar-bast').style.width=(blended/maxv*100)+'%';
-      $('seg-local').style.width=(local*100)+'%'; $('seg-mid').style.width=(mid*100)+'%';
-      $('seg-cn').style.width=(cn*100)+'%'; $('seg-us').style.width=(us*100)+'%';
-      $('l-local').textContent=pct(local); $('l-mid').textContent=pct(mid);
-      $('l-cn').textContent=pct(cn); $('l-us').textContent=pct(us);
+      $('seg-local').style.width=(sh.local*100)+'%';
+      $('seg-non').style.width=(sh.non*100)+'%';
+      $('seg-us').style.width=(sh.us*100)+'%';
     }
-    [sLocal,sFr,sCn,pLocal,pMid,pCn,pUs].forEach(function(el){ el.addEventListener('input',calc); });
+    ['local','non','us'].forEach(function(k){
+      S[k].addEventListener('input', function(){ rebalance(k); calc(); });
+    });
+    [pLocal,pNon,pUs].forEach(function(el){ el.addEventListener('input', calc); });
     var reset=$('calc-reset');
-    if(reset) reset.addEventListener('click',function(){
-      sLocal.value=DEFAULTS.local; sFr.value=DEFAULTS.fr; sCn.value=DEFAULTS.cn;
-      pLocal.value=DEFAULTS.pLocal; pMid.value=DEFAULTS.pMid; pCn.value=DEFAULTS.pCn; pUs.value=DEFAULTS.pUs;
+    if(reset) reset.addEventListener('click', function(){
+      sLocal.value=DEFAULTS.local; sNon.value=DEFAULTS.non; sUs.value=DEFAULTS.us;
+      pLocal.value=DEFAULTS.pLocal; pNon.value=DEFAULTS.pNon; pUs.value=DEFAULTS.pUs;
       calc();
     });
     calc();
