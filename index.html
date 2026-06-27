@@ -5,10 +5,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bastion — the AI Trust Router</title>
-<meta name="description" content="Bastion is the trust router for enterprise AI. It keeps regulated data inside your boundary and routes everything else to the cheapest model that clears the bar — with a tamper-evident audit of every decision. Model your own cost savings with the interactive calculator.">
+<meta name="description" content="Bastion is the trust router for enterprise AI. It keeps regulated data inside your boundary by default and routes everything else to the cheapest model that clears the bar — with a tamper-evident audit of every decision. Model your own cost savings with the interactive calculator.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <meta property="og:title" content="Bastion — the AI Trust Router">
-<meta property="og:description" content="Frontier AI, behind your walls. Keep regulated data in your boundary; route everything else to the cheapest model that clears the bar — provably, and audited.">
+<meta property="og:description" content="Frontier AI, behind your walls. Keep regulated data in your boundary by default; route everything else to the cheapest model that clears the bar — policy-enforced, and audited.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0a0d13">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -280,7 +280,7 @@
     <div>
       <span class="badge"><span class="dot"></span> Self-hosted · Bring your own keys · 98/100 alpha-ready</span>
       <h1>Frontier AI,<br><span class="grad">behind your walls.</span></h1>
-      <p class="sub">Bastion is the trust router for enterprise AI. It keeps regulated data inside your boundary and routes everything else to the cheapest model that clears the bar — with a tamper-evident audit of every decision.</p>
+      <p class="sub">Bastion is the trust router for enterprise AI. By default it keeps regulated data inside your boundary, and routes everything else to the cheapest model that clears the bar — with a tamper-evident audit of every decision.</p>
       <div class="cta">
         <a class="btn btn-primary" href="mailto:john@greatfallsventures.com?subject=Bastion%20early%20access">Request early access →</a>
         <a class="btn btn-ghost" href="#cost">Model your savings</a>
@@ -306,7 +306,7 @@
 
   <div class="wrap stats">
     <div class="stat rv"><div class="n grad">~88%</div><div class="l">lower cost vs all-US-frontier</div><div class="d">modeled — <a href="#cost">drag the sliders below</a></div></div>
-    <div class="stat rv"><div class="n grad">Zero</div><div class="l">regulated-data leaks</div><div class="d">provable, fail-closed, tested over a corpus</div></div>
+    <div class="stat rv"><div class="n grad">0 leaks</div><div class="l">in our compliance test suite</div><div class="d">regulated data hard-blocked by default · fail-closed</div></div>
     <div class="stat rv"><div class="n grad">100%</div><div class="l">self-hosted &amp; BYOK</div><div class="d">in your boundary; nothing calls home</div></div>
   </div>
 </section>
@@ -384,12 +384,12 @@
     <div class="ftext rv">
       <span class="eyebrow">PII tokenization</span>
       <h2>De-identify in your boundary — and the whole fleet opens up.</h2>
-      <p>Bastion detects PII inside your boundary and swaps it for tokens before a single byte leaves. The model sees <span style="font-family:var(--mono)">[[EMAIL_1]]</span>, never the address — and the real values are rehydrated locally in the response. Because what leaves is scrubbed, the offshore-jurisdiction penalty is waived, so confidential work can route to the cheapest capable model anywhere — not just the local or US-frontier tier.</p>
+      <p>Bastion detects PII inside your boundary and swaps it for tokens before the request is sent. The model sees <span style="font-family:var(--mono)">[[EMAIL_1]]</span> in place of the address — and the real values are rehydrated locally in the response. Because the detected PII is scrubbed before egress, the offshore-jurisdiction penalty is waived, so confidential work can route to the cheapest capable model anywhere — not just the local or US-frontier tier.</p>
       <ul class="fbul">
-        <li>PII never leaves — <span>detect → tokenize → send → rehydrate, all in-boundary</span></li>
+        <li>Tokenized before egress — <span>detected PII → tokenize → send → rehydrate; raw values stay in-boundary</span></li>
         <li>Unlocks aggressive routing — <span>confidential work becomes eligible for cheap near-frontier models (GLM · Qwen · Kimi)</span></li>
-        <li>Eyeball or hand-edit <span>the tokenized text before anything is sent</span></li>
-        <li>Regulated data is never auto-sent — <span>it stays in your boundary, period</span></li>
+        <li>You stay in control — <span>eyeball or hand-edit the tokenized text before anything is sent</span></li>
+        <li>Regulated data isn't auto-sent off-boundary — <span>the default policy keeps it in your boundary</span></li>
       </ul>
     </div>
     <div class="visual rv">
@@ -413,7 +413,7 @@
     <div class="ftext rv">
       <span class="eyebrow">Governed web access</span>
       <h2>Your local model, but it can see the live web.</h2>
-      <p>A local LLM is frozen at its training cutoff — fine for private work, useless for "what shipped this quarter." Bastion gives it governed, in-boundary web access: it runs a self-hosted SearXNG search, fetches and reranks the actual result pages, and answers from fresh sources — without your prompt ever touching a cloud search API. The query itself is classified and egress-governed, so it captures live-data traffic a dumb chatbot would have to hand to a frontier model.</p>
+      <p>A local LLM is frozen at its training cutoff — fine for private work, useless for "what shipped this quarter." Bastion gives it governed, in-boundary web access: it runs a self-hosted SearXNG search, fetches and reranks the actual result pages, and answers from fresh sources — composed by your local model, with SearXNG self-hosted in your boundary. The query that goes out is classified and egress-governed, so it captures live-data traffic a dumb chatbot would have to hand to a frontier model.</p>
       <ul class="fbul">
         <li>Live answers from a local model — <span>no frontier API required to stay current</span></li>
         <li>In-boundary deep retrieval — <span>fetch · extract · rerank result pages, all on your infra</span></li>
@@ -427,7 +427,7 @@
         <div class="flow-step"><span class="n">1</span> local model · query classified <span class="ok-tag">public · egress ok</span></div>
         <div class="flow-step"><span class="n">2</span> in-boundary SearXNG search</div>
         <div class="flow-step"><span class="n">3</span> fetch · extract · rerank the result pages</div>
-        <div class="flow-ans">→ a grounded answer from fresh sources — your prompt never touched a cloud search API</div>
+        <div class="flow-ans">→ a grounded answer from fresh sources, composed in your boundary by your local model</div>
         <div class="flow-note">A query carrying confidential or regulated data is blocked from egress and answered locally.</div>
       </div>
     </div>
@@ -443,7 +443,7 @@
     </div>
     <div class="steps">
       <div class="step rv"><h3>Classify</h3><p>Each prompt is scored <b>public · internal · confidential · regulated</b> (rules + optional Microsoft Presidio NER), with explainable, redacted signals.</p></div>
-      <div class="step rv"><h3>Enforce the boundary</h3><p>Regulated &amp; confidential data is <b>hard-blocked</b> to your boundary. Structurally, fail-closed, tested to zero leaks over a corpus.</p></div>
+      <div class="step rv"><h3>Enforce the boundary</h3><p>Regulated &amp; confidential data is <b>hard-blocked</b> to your boundary by default — structural, fail-closed, with zero leaks across our test corpus.</p></div>
       <div class="step rv"><h3>Route by capability + cost</h3><p>The cheapest model that clears the quality bar for the task category. Local-first; escalate to cloud only when it actually pays off.</p></div>
       <div class="step rv"><h3>Audit &amp; learn</h3><p>Every decision lands in a SHA-256 hash-chained trail. Flag a bad call and the correction sticks — and survives a restart.</p></div>
     </div>
@@ -484,12 +484,12 @@
     </div>
     <div class="caps">
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h10"/></svg></div><h3>Sensitivity classification</h3><p>Rules + optional Presidio NER detect PII, PHI, secrets and financial data — explainable, redacted, raise-only.</p></div>
-      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><h3>Policy-as-code boundary</h3><p>Regulated &amp; confidential data is hard-blocked to your boundary. Strictest rule wins; fail-closed by construction.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><h3>Policy-as-code boundary</h3><p>Regulated &amp; confidential data is hard-blocked to your boundary by default. Strictest rule wins; fail-closed by construction.</p></div>
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-7"/></svg></div><h3>Capability + cost routing</h3><p>A transparent multi-factor score — quality · cost · boundary · latency — picks the cheapest model that clears the bar.</p></div>
-      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0110 0v3M5 11h14v9H5z"/></svg></div><h3>PII tokenization</h3><p>De-identify → send → rehydrate lets confidential work use a frontier model without the PII ever leaving your walls.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0110 0v3M5 11h14v9H5z"/></svg></div><h3>PII tokenization</h3><p>De-identify → send → rehydrate lets confidential work use a frontier model while the raw values stay in your boundary.</p></div>
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><h3>Governed web search</h3><p>In-boundary SearXNG with an egress governor: public queries go out, confidential/regulated are blocked — every egress audited.</p></div>
-      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/><path d="M9 4v16"/></svg></div><h3>Tamper-evident audit</h3><p>A SHA-256 hash-chained decision trail and a cost/savings ledger — proof of what ran where, and what you saved.</p></div>
-      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/><path d="M12 7v5l3 2"/></svg></div><h3>Self-learning</h3><p>Flag a mis-route and the correction applies live — raise always; lower only when safe; never declassifies protected data.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/><path d="M9 4v16"/></svg></div><h3>Tamper-evident audit</h3><p>A SHA-256 hash-chained decision trail and a cost/savings ledger — a verifiable record of what ran where, and what you saved.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/><path d="M12 7v5l3 2"/></svg></div><h3>Self-learning</h3><p>Flag a mis-route and the correction applies live — raise always; lower only when safe; by design it won't declassify protected data.</p></div>
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4z"/><path d="M2 20h20"/></svg></div><h3>Self-hosted &amp; BYOK</h3><p>Runs in your boundary on macOS, Linux or Windows. Binds to localhost, brings your own keys, and never calls home.</p></div>
     </div>
   </div>
@@ -532,7 +532,7 @@
       <div class="pcard rv">
         <div class="ic">🕳️</div>
         <h3>Black-box routing has no proof</h3>
-        <p>If you can't show which model saw which data — and prove regulated data never left — you can't pass an audit, and you can't trust the savings.</p>
+        <p>If you can't show which model saw which data — and where every prompt actually went — you can't pass an audit, and you can't trust the savings.</p>
       </div>
     </div>
   </div>
@@ -566,9 +566,9 @@
       <div class="ccard win rv">
         <h3>Bastion</h3>
         <ul>
-          <li>Boundary-first: regulated data never leaves</li>
+          <li>Boundary-first: regulated data hard-blocked by default</li>
           <li>Capability + cost routing across a neutral fleet</li>
-          <li>Provable, tamper-evident audit of every decision</li>
+          <li>Verifiable, tamper-evident audit of every decision</li>
           <li>Self-hosted, BYOK, and it learns from you</li>
         </ul>
       </div>
@@ -599,7 +599,7 @@
           <svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4f9cff"/><stop offset="1" stop-color="#3ecf8e"/></linearGradient></defs><path d="M16 3 L27 7.6 V15.6 C27 22.3 22.2 26.7 16 29 C9.8 26.7 5 22.3 5 15.6 V7.6 Z" fill="none" stroke="url(#lg2)" stroke-width="2.2" stroke-linejoin="round"/><path d="M10.5 19.5 V13 H12.7 V11 H14.9 V13 H17.1 V11 H19.3 V13 H21.5 V19.5 Z" fill="url(#lg2)"/></svg>
           <span>Bastion</span>
         </a>
-        <p class="muted">The trust router for enterprise AI. In-boundary by design — your data never crosses the moat.</p>
+        <p class="muted">The trust router for enterprise AI. In-boundary by design — built to keep your sensitive data behind your walls.</p>
       </div>
       <div class="foot-links">
         <div class="foot-col">
@@ -621,6 +621,7 @@
       <span>© 2026 Great Falls Ventures. All rights reserved.</span>
       <span>Self-hosted · BYOK · nothing calls home</span>
     </div>
+    <p style="margin-top:16px;font-size:11.5px;color:var(--faint);line-height:1.6;max-width:760px">Bastion is in active development (alpha). Capability claims describe the product's default configuration and fail-closed policy; routing policy and de-identification are user-configurable, and PII detection is best-effort, so review before enabling egress. Cost and savings figures are illustrative models at representative list prices, not guarantees of performance or outcomes.</p>
   </div>
 </footer>
 
