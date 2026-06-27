@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Bastion — the AI Trust Router</title>
-<meta name="description" content="Bastion is the trust router for enterprise AI. It keeps regulated data inside your boundary by default and routes everything else to the cheapest model that clears the bar — with a tamper-evident audit of every decision. Model your own cost savings with the interactive calculator.">
+<meta name="description" content="Bastion is the trust router for enterprise AI. It's designed to keep regulated data inside your boundary by default and routes everything else to the cheapest model that clears the bar — with a tamper-evident audit of every decision. Model your own cost savings with the interactive calculator.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <meta property="og:title" content="Bastion — the AI Trust Router">
 <meta property="og:description" content="Frontier AI, behind your walls. Keep regulated data in your boundary by default; route everything else to the cheapest model that clears the bar — policy-enforced, and audited.">
@@ -75,7 +75,7 @@
   /* hero stat strip */
   .stats{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px;padding-top:30px;border-top:1px solid var(--border)}
   @media(max-width:760px){.stats{grid-template-columns:1fr;gap:20px;margin-top:40px}}
-  .stat .n{font-size:clamp(30px,4vw,42px);font-weight:800;letter-spacing:-.03em;line-height:1}
+  .stat .n{font-size:clamp(30px,4vw,42px);font-weight:800;letter-spacing:-.03em;line-height:1;white-space:nowrap}
   .stat .l{font-size:14.5px;color:var(--text);font-weight:600;margin-top:9px}
   .stat .d{font-size:12.5px;color:var(--faint);margin-top:3px}
   .stat a{color:var(--accent);border-bottom:1px dashed rgba(79,156,255,.5)}
@@ -157,6 +157,16 @@
   .ok-tag{margin-left:auto;font-size:11.5px;color:#9bf0c8;border:1px solid rgba(62,207,142,.35);background:rgba(62,207,142,.08);border-radius:999px;padding:2px 9px;font-weight:600}
   .flow-ans{font-size:13.5px;color:var(--text);background:rgba(62,207,142,.06);border:1px solid rgba(62,207,142,.25);border-radius:10px;padding:12px 14px;margin-top:2px}
   .flow-note{font-size:12px;color:var(--faint);text-align:center;margin-top:2px}
+  /* controls visual */
+  .ctrls{padding:22px;display:flex;flex-direction:column;gap:13px}
+  .ctrls .grp{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);font-weight:600}
+  .ctrl-row{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13.5px;color:var(--muted)}
+  .ctrl-row .v{font-family:var(--mono);font-size:12.5px;color:var(--text);background:var(--bg);border:1px solid var(--border2);border-radius:7px;padding:4px 10px}
+  .ctrl-chip{font-family:var(--mono);font-size:12px;padding:3px 9px;border-radius:999px;border:1px solid var(--border2);color:var(--muted)}
+  .ctrl-chip.on{color:#ffb4b4;border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.08)}
+  .ctrl-chip.lock{color:#9bf0c8;border-color:rgba(62,207,142,.4);background:rgba(62,207,142,.1)}
+  .ctrls .cdiv{height:1px;background:var(--border);margin:4px 0}
+  .ctrls .note{font-size:12px;color:var(--faint);font-family:var(--mono)}
 
   /* examples */
   .ex{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
@@ -278,16 +288,16 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="badge"><span class="dot"></span> Self-hosted · Bring your own keys · 98/100 alpha-ready</span>
+      <span class="badge"><span class="dot"></span> Self-hosted · Bring your own keys · alpha-ready</span>
       <h1>Frontier AI,<br><span class="grad">behind your walls.</span></h1>
-      <p class="sub">Bastion is the trust router for enterprise AI. By default it keeps regulated data inside your boundary, and routes everything else to the cheapest model that clears the bar — with a tamper-evident audit of every decision.</p>
+      <p class="sub">Bastion is the trust router for enterprise AI. By default it's designed to keep regulated data inside your boundary, and routes everything else to the cheapest model that clears the bar — with a tamper-evident audit of every decision.</p>
       <div class="cta">
         <a class="btn btn-primary" href="mailto:john@greatfallsventures.com?subject=Bastion%20early%20access">Request early access →</a>
         <a class="btn btn-ghost" href="#cost">Model your savings</a>
       </div>
       <div class="reassure">
         <span><b>In your boundary</b> · binds to 127.0.0.1</span>
-        <span><b>Nothing calls home</b></span>
+        <span><b>No phone-home telemetry</b></span>
         <span><b>macOS · Linux · Windows</b></span>
       </div>
     </div>
@@ -300,14 +310,14 @@
       <div class="kv"><span>Model</span><span class="mono">local/llama3 · customer</span></div>
       <div class="kv"><span>Cloud frontier</span><span><span class="pill blk">blocked</span></span></div>
       <div class="kv"><span>Signals</span><span class="mono">pii.email · pii.ssn · fin.card</span></div>
-      <div class="audit">⛓ sha256 · chain intact · recorded labels only, never values</div>
+      <div class="audit">⛓ sha256 · chain intact · records labels only — not the raw values</div>
     </div>
   </div>
 
   <div class="wrap stats">
     <div class="stat rv"><div class="n grad">~88%</div><div class="l">lower cost vs all-US-frontier</div><div class="d">modeled — <a href="#cost">drag the sliders below</a></div></div>
-    <div class="stat rv"><div class="n grad">0 leaks</div><div class="l">in our compliance test suite</div><div class="d">regulated data hard-blocked by default · fail-closed</div></div>
-    <div class="stat rv"><div class="n grad">100%</div><div class="l">self-hosted &amp; BYOK</div><div class="d">in your boundary; nothing calls home</div></div>
+    <div class="stat rv"><div class="n grad">Fail-closed</div><div class="l">regulated data hard-blocked by default</div><div class="d">structural policy — the safe path is the default</div></div>
+    <div class="stat rv"><div class="n grad">100%</div><div class="l">self-hosted &amp; BYOK</div><div class="d">in your boundary; no telemetry back to us</div></div>
   </div>
 </section>
 
@@ -332,7 +342,7 @@
         <div class="slider">
           <label for="s-local">Workload eligible for a local LLM <output id="o-local">55%</output></label>
           <input type="range" id="s-local" min="0" max="100" value="55" aria-label="Workload share eligible for a local LLM">
-          <span class="hint">runs in-boundary at ~$0 marginal cost — never leaves your walls</span>
+          <span class="hint">runs in-boundary with no per-token API fee — you supply the compute; local-tier work stays within your walls</span>
         </div>
         <div class="slider">
           <label for="s-non">Workload eligible for non-US frontier models <output id="o-non">39%</output></label>
@@ -384,7 +394,7 @@
     <div class="ftext rv">
       <span class="eyebrow">PII tokenization</span>
       <h2>De-identify in your boundary — and the whole fleet opens up.</h2>
-      <p>Bastion detects PII inside your boundary and swaps it for tokens before the request is sent. The model sees <span style="font-family:var(--mono)">[[EMAIL_1]]</span> in place of the address — and the real values are rehydrated locally in the response. Because the detected PII is scrubbed before egress, the offshore-jurisdiction penalty is waived, so confidential work can route to the cheapest capable model anywhere — not just the local or US-frontier tier.</p>
+      <p>Bastion scans for PII inside your boundary and swaps the values it detects for tokens before the request is sent. The model sees <span style="font-family:var(--mono)">[[EMAIL_1]]</span> in place of the address — and the real values are rehydrated locally in the response. Because detected PII is replaced with tokens before egress, your routing policy can relax its offshore restriction for that request — so de-identified work becomes eligible for the cheapest capable model anywhere, not just the local or US-frontier tier.</p>
       <ul class="fbul">
         <li>Tokenized before egress — <span>detected PII → tokenize → send → rehydrate; raw values stay in-boundary</span></li>
         <li>Unlocks aggressive routing — <span>confidential work becomes eligible for cheap near-frontier models (GLM · Qwen · Kimi)</span></li>
@@ -400,7 +410,7 @@
         <span class="tok-label">Sent to the model</span>
         <div class="tok-line">Refund <mark class="tok">[[EMAIL_1]]</mark> — card <mark class="tok">[[CARD_1]]</mark></div>
         <div class="tok-foot">
-          <div class="routes">→ now routable to <b>GLM · Qwen · Kimi</b> — near-frontier quality, offshore penalty waived</div>
+          <div class="routes">→ now routable to <b>GLM · Qwen · Kimi</b> — near-frontier quality, offshore restriction relaxed by policy</div>
           <div class="restore">← real values restored in your boundary, in the response</div>
         </div>
       </div>
@@ -428,7 +438,7 @@
         <div class="flow-step"><span class="n">2</span> in-boundary SearXNG search</div>
         <div class="flow-step"><span class="n">3</span> fetch · extract · rerank the result pages</div>
         <div class="flow-ans">→ a grounded answer from fresh sources, composed in your boundary by your local model</div>
-        <div class="flow-note">A query carrying confidential or regulated data is blocked from egress and answered locally.</div>
+        <div class="flow-note">A query the classifier flags as confidential or regulated is blocked from egress and answered locally.</div>
       </div>
     </div>
   </div>
@@ -443,7 +453,7 @@
     </div>
     <div class="steps">
       <div class="step rv"><h3>Classify</h3><p>Each prompt is scored <b>public · internal · confidential · regulated</b> (rules + optional Microsoft Presidio NER), with explainable, redacted signals.</p></div>
-      <div class="step rv"><h3>Enforce the boundary</h3><p>Regulated &amp; confidential data is <b>hard-blocked</b> to your boundary by default — structural, fail-closed, with zero leaks across our test corpus.</p></div>
+      <div class="step rv"><h3>Enforce the boundary</h3><p>Regulated &amp; confidential data is <b>hard-blocked</b> to your boundary by default — fail-closed by design, with no policy violations observed across our internal test corpus.</p></div>
       <div class="step rv"><h3>Route by capability + cost</h3><p>The cheapest model that clears the quality bar for the task category. Local-first; escalate to cloud only when it actually pays off.</p></div>
       <div class="step rv"><h3>Audit &amp; learn</h3><p>Every decision lands in a SHA-256 hash-chained trail. Flag a bad call and the correction sticks — and survives a restart.</p></div>
     </div>
@@ -454,13 +464,13 @@
   <div class="wrap">
     <div class="sec-head rv">
       <span class="eyebrow">See it decide</span>
-      <h2>Three prompts, three very different — and correct — routes.</h2>
+      <h2>Three prompts, three very different routes.</h2>
     </div>
     <div class="ex">
       <div class="excard rv">
         <div class="meta"><span class="pill reg">regulated</span><span class="pill ok">served</span></div>
         <div class="q">Update CRM for jane@acme.com, SSN 123-45-6789…</div>
-        <p class="out"><b>Stays in your boundary.</b> Served on <span style="font-family:var(--mono);font-size:13px">local/llama3</span>; every cloud model blocked. The audit records that PII was present and its types — never the values.</p>
+        <p class="out"><b>Stays in your boundary.</b> Served on <span style="font-family:var(--mono);font-size:13px">local/llama3</span>; cloud models are blocked for this prompt. The audit records that PII was present and its types — not the values.</p>
       </div>
       <div class="excard rv">
         <div class="meta"><span class="pill esc">public · code</span><span class="pill esc">escalated</span></div>
@@ -480,17 +490,17 @@
   <div class="wrap">
     <div class="sec-head rv">
       <span class="eyebrow">Capabilities</span>
-      <h2>A compliance boundary and a cost engine, in one router.</h2>
+      <h2>A policy-enforced data boundary and a cost engine, in one router.</h2>
     </div>
     <div class="caps">
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h10"/></svg></div><h3>Sensitivity classification</h3><p>Rules + optional Presidio NER detect PII, PHI, secrets and financial data — explainable, redacted, raise-only.</p></div>
-      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><h3>Policy-as-code boundary</h3><p>Regulated &amp; confidential data is hard-blocked to your boundary by default. Strictest rule wins; fail-closed by construction.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></div><h3>Policy-as-code boundary</h3><p>Regulated &amp; confidential data is hard-blocked to your boundary by default. Strictest rule wins; fail-closed by design.</p></div>
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-7"/></svg></div><h3>Capability + cost routing</h3><p>A transparent multi-factor score — quality · cost · boundary · latency — picks the cheapest model that clears the bar.</p></div>
-      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0110 0v3M5 11h14v9H5z"/></svg></div><h3>PII tokenization</h3><p>De-identify → send → rehydrate lets confidential work use a frontier model while the raw values stay in your boundary.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0110 0v3M5 11h14v9H5z"/></svg></div><h3>PII tokenization</h3><p>De-identify → send → rehydrate lets confidential work use a frontier model while the detected raw values stay in your boundary.</p></div>
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><h3>Governed web search</h3><p>In-boundary SearXNG with an egress governor: public queries go out, confidential/regulated are blocked — every egress audited.</p></div>
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/><path d="M9 4v16"/></svg></div><h3>Tamper-evident audit</h3><p>A SHA-256 hash-chained decision trail and a cost/savings ledger — a verifiable record of what ran where, and what you saved.</p></div>
-      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/><path d="M12 7v5l3 2"/></svg></div><h3>Self-learning</h3><p>Flag a mis-route and the correction applies live — raise always; lower only when safe; by design it won't declassify protected data.</p></div>
-      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4z"/><path d="M2 20h20"/></svg></div><h3>Self-hosted &amp; BYOK</h3><p>Runs in your boundary on macOS, Linux or Windows. Binds to localhost, brings your own keys, and never calls home.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/><path d="M12 7v5l3 2"/></svg></div><h3>Self-learning</h3><p>Flag a mis-route and the correction applies live — the learning loop only raises sensitivity automatically; lowering a protected classification requires explicit review.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4z"/><path d="M2 20h20"/></svg></div><h3>Self-hosted &amp; BYOK</h3><p>Runs in your boundary on macOS, Linux or Windows. Binds to localhost, brings your own keys, and sends no telemetry back to us.</p></div>
     </div>
   </div>
 </section>
@@ -522,7 +532,7 @@
       <div class="pcard rv">
         <div class="ic">🔒</div>
         <h3>Regulated data can't touch a frontier API</h3>
-        <p>HIPAA, GDPR, PCI, and financial data legally can't leave your boundary. So the most capable models stay off-limits for the work that matters most.</p>
+        <p>HIPAA, GDPR, PCI and similar rules put strict controls on where regulated data can go and who may process it — so for the work that matters most, keeping it in-boundary and off frontier APIs is often the simplest defensible path.</p>
       </div>
       <div class="pcard rv">
         <div class="ic">💸</div>
@@ -576,13 +586,43 @@
   </div>
 </section>
 
+<section id="controls" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="wrap feature">
+    <div class="ftext rv">
+      <span class="eyebrow">You hold the controls</span>
+      <h2>Tighten the routing — globally, or per prompt.</h2>
+      <p>Policy decides what's allowed; you decide how conservative to be on top of it. Set a global posture in Settings, or clamp a single prompt with a manual override. Every control is restrict-only — you can narrow where a prompt may go, never loosen the boundary.</p>
+      <ul class="fbul">
+        <li>Strategy dial — <span>cost · balanced · quality · sovereignty</span></li>
+        <li>Local-only lockdown — <span>disable cloud escalation entirely; keep everything in-boundary</span></li>
+        <li>Exclude jurisdictions — <span>keep offshore providers out of the fleet</span></li>
+        <li>Per-prompt overrides — <span>force local, or pin one specific model, for just this prompt</span></li>
+        <li>Restrict-only by design — <span>pinning regulated data to a blocked model fails closed, it doesn't leak</span></li>
+      </ul>
+    </div>
+    <div class="visual rv">
+      <div class="card ctrls" aria-label="Routing controls">
+        <span class="grp">Settings · global posture</span>
+        <div class="ctrl-row"><span>Decision strategy</span><span class="v">sovereignty ▾</span></div>
+        <div class="ctrl-row"><span>Cloud escalation</span><span class="ctrl-chip lock">✓ local-only</span></div>
+        <div class="ctrl-row"><span>Exclude jurisdictions</span><span><span class="ctrl-chip on">CN ✕</span> <span class="ctrl-chip">US</span> <span class="ctrl-chip">EU</span></span></div>
+        <div class="cdiv"></div>
+        <span class="grp">This prompt · manual override</span>
+        <div class="ctrl-row"><span>Force local-only</span><span class="ctrl-chip lock">on</span></div>
+        <div class="ctrl-row"><span>Pin model</span><span class="v">local/llama3 ▾</span></div>
+        <div class="note">↳ pin a blocked model → fails closed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="get-started">
   <div class="wrap">
     <div class="cta-band rv">
       <h2>Stand it up in your own boundary.</h2>
       <p class="muted" style="max-width:560px;margin:16px auto 0;position:relative">One command brings up the full in-boundary stack — router, PII detection and governed search — all bound to localhost. Then point it at your models and keys.</p>
       <div class="cmd"><span><span class="p">$</span> docker compose up</span><button class="copy" data-cmd="docker compose up" type="button">Copy</button></div>
-      <p class="muted" style="font-size:13px;position:relative">Runs on macOS, Linux &amp; Windows · auto-detects LIVE vs DEMO · never fakes "your data stayed local".</p>
+      <p class="muted" style="font-size:13px;position:relative">Runs on macOS, Linux &amp; Windows · auto-detects LIVE vs DEMO · won't report "your data stayed local" unless it did.</p>
       <div class="cta" style="justify-content:center;margin-top:28px;position:relative">
         <a class="btn btn-primary" href="mailto:john@greatfallsventures.com?subject=Bastion%20early%20access&body=I'd%20like%20early%20access%20to%20Bastion.">Request early access →</a>
         <a class="btn btn-ghost" href="mailto:john@greatfallsventures.com?subject=Bastion%20demo">Book a demo</a>
@@ -619,7 +659,7 @@
     </div>
     <div class="copyline">
       <span>© 2026 Great Falls Ventures. All rights reserved.</span>
-      <span>Self-hosted · BYOK · nothing calls home</span>
+      <span>Self-hosted · BYOK · no phone-home telemetry</span>
     </div>
     <p style="margin-top:16px;font-size:11.5px;color:var(--faint);line-height:1.6;max-width:760px">Bastion is in active development (alpha). Capability claims describe the product's default configuration and fail-closed policy; routing policy and de-identification are user-configurable, and PII detection is best-effort, so review before enabling egress. Cost and savings figures are illustrative models at representative list prices, not guarantees of performance or outcomes.</p>
   </div>
