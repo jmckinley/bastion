@@ -286,6 +286,7 @@
       <a href="#cost">Savings</a>
       <a href="#deidentify">De-identify</a>
       <a href="#sovereignty">Sovereignty</a>
+      <a href="#onboarding">Onboarding</a>
       <a href="#how">How it works</a>
       <a href="#prove">Prove it</a>
       <a href="#architecture">Architecture</a>
@@ -619,8 +620,9 @@
 <section id="why">
   <div class="wrap">
     <div class="sec-head rv">
-      <span class="eyebrow">Why Bastion</span>
+      <span class="eyebrow">Where Bastion fits</span>
       <h2>Not a single-vendor wrapper. Not a blind cost router. A trust boundary that also saves money.</h2>
+      <p>Cost routers (OpenRouter, LiteLLM) optimize price; AI gateways (Portkey, Cloudflare) centralize operations in their cloud; governance tools (Presidio, Nightfall) inspect and redact. Each is built around a data plane that sees your traffic — the one thing a sovereignty-first buyer can't allow. Bastion is the inverse: the routing decision <em>and</em> your data stay in your boundary, and you can prove zero-leak yourself. The honest trade-off — that proof is self-validated today; there's no third-party attestation yet.</p>
     </div>
     <div class="compare">
       <div class="ccard rv">
@@ -654,7 +656,37 @@
   </div>
 </section>
 
-<section id="controls" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+<section id="onboarding" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="wrap feature">
+    <div class="ftext rv">
+      <span class="eyebrow">Day-one onboarding</span>
+      <h2>Goals in, guardrails out — in three questions.</h2>
+      <p>Most trust tools hand you a wall of policy knobs. Bastion asks three plain questions the first time you open it — your risk appetite, cost vs quality, and the kinds of data you handle — and turns the answers into a routing profile. The same wizard runs in the dashboard <em>and</em> the CLI (<span style="font-family:var(--mono)">npm run setup</span>), so a headless install is configured in seconds too. It only tunes preferences inside the permitted pool — regulated and confidential data stay hard-blocked, whatever you pick.</p>
+      <ul class="fbul">
+        <li>Risk appetite → <span>how readily work leaves the boundary — in-boundary-only, balanced, or cloud-forward</span></li>
+        <li>Cost vs quality → <span>sets the strategy dial; the data you handle sets the quality bar</span></li>
+        <li>Dashboard <em>and</em> CLI → <span>the CLI persists your profile to config, so it survives restarts</span></li>
+        <li>Safe by construction → <span>only narrows the permitted pool; re-runnable anytime, and the quality bar only ever raises</span></li>
+      </ul>
+    </div>
+    <div class="visual rv">
+      <div class="card ctrls" aria-label="Set your guardrails — three-question onboarding">
+        <span class="grp">Set your guardrails · 3 questions</span>
+        <div class="ctrl-row"><span>1 · Sensitive work</span><span class="v">stays local ▾</span></div>
+        <div class="ctrl-row"><span>2 · Cost or quality</span><span class="v">balanced ▾</span></div>
+        <div class="ctrl-row"><span>3 · Data you handle</span><span class="ctrl-chip on">confidential</span></div>
+        <div class="cdiv"></div>
+        <span class="grp">Your profile · applied live</span>
+        <div class="ctrl-row"><span>Strategy</span><span class="v">balanced</span></div>
+        <div class="ctrl-row"><span>Quality bar</span><span class="v">55</span></div>
+        <div class="ctrl-row"><span>Cloud escalation</span><span class="ctrl-chip lock">on · regulated blocked</span></div>
+        <div class="note">↳ editable anytime in Settings · regulated stays in-boundary regardless</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="controls">
   <div class="wrap feature">
     <div class="ftext rv">
       <span class="eyebrow">You hold the controls</span>
@@ -763,6 +795,7 @@
           <h4>Product</h4>
           <a href="#cost">Savings calculator</a>
           <a href="#router">Router brain</a>
+          <a href="#onboarding">Onboarding</a>
           <a href="#deidentify">De-identify</a>
           <a href="#sovereignty">Sovereignty</a>
           <a href="#how">How it works</a>
