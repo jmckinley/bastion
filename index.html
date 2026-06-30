@@ -260,6 +260,14 @@
   .foot-col a:hover{color:var(--text)}
   .copyline{margin-top:36px;padding-top:24px;border-top:1px solid var(--border);font-size:13px;color:var(--faint);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
+  /* route→cache→compress + prove blocks */
+  .cost-ways{margin-top:44px}
+  .prove-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:760px){.prove-grid{grid-template-columns:1fr}}
+  .prove-card{padding:22px;display:flex;flex-direction:column;gap:14px}
+  .prove-card .cmd{margin:0;width:100%;justify-content:space-between;font-size:14px}
+  .prove-card p{color:var(--muted);font-size:14px}
+
   /* reveal — fail-open: only hidden when JS is present, always revealed within ~1s */
   .js .rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
   .js .rv.in{opacity:1;transform:none}
@@ -277,7 +285,9 @@
     <nav class="nav-links">
       <a href="#cost">Savings</a>
       <a href="#deidentify">De-identify</a>
+      <a href="#sovereignty">Sovereignty</a>
       <a href="#how">How it works</a>
+      <a href="#prove">Prove it</a>
       <a href="#architecture">Architecture</a>
       <a class="nav-cta" href="mailto:john@greatfallsventures.com?subject=Bastion%20early%20access">Request access</a>
     </nav>
@@ -386,6 +396,19 @@
         <p class="calc-note">Savings are versus a baseline of routing 100% of traffic to a US frontier model at the price above. An illustrative model at representative list prices — once Bastion is running, the savings ledger reports the <em>measured</em> number from your real token volumes.</p>
       </div>
     </div>
+
+    <div class="cost-ways rv">
+      <div class="sec-head" style="max-width:760px;margin-bottom:28px">
+        <span class="eyebrow">Three ways it cuts the bill</span>
+        <h2 style="font-size:clamp(24px,3vw,32px)">Route → Cache → Compress.</h2>
+        <p>Routing to the cheapest capable model is only the first lever. Two more trim the bill before a token is ever billed — both inside your boundary.</p>
+      </div>
+      <div class="cols3">
+        <div class="cap"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-7"/></svg></div><h3>Route</h3><p>Sensitivity- and capability-aware routing sends each prompt to the lowest-cost model that clears its quality bar — local-first, cloud only when it actually pays off.</p></div>
+        <div class="cap"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3z"/><path d="M4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7"/></svg></div><h3>Cache</h3><p>A repeat answer is served from an in-boundary cache with <b>no model call</b> — zero egress, zero cost. It never caches confidential or regulated work, and it's scoped per tenant.</p></div>
+        <div class="cap"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 9V5h4M20 9V5h-4M4 15v4h4M20 15v4h-4M9 12h6"/></svg></div><h3>Compress</h3><p>Optional in-boundary compression shrinks cloud-bound prompts so fewer input tokens ever cross the boundary — a near-lossless heuristic (optional stronger local-model tier), and PII-token-safe.</p></div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -444,6 +467,51 @@
   </div>
 </section>
 
+<section id="router" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="wrap feature">
+    <div class="ftext rv">
+      <span class="eyebrow">The router brain</span>
+      <h2>A triage brain that reads the whole session — and never leaves your boundary.</h2>
+      <p>Before anything routes, a session-aware local-LLM triage judges each request's sensitivity, subject and complexity across the entire conversation — not just the latest prompt. It can only raise caution, never lower it; it fails closed; and the judgment itself runs on a local model, so even the decision about <em>where</em> a prompt goes never touches a cloud API.</p>
+      <ul class="fbul">
+        <li>Reads the whole session — <span>sensitivity, subject and complexity scored across the conversation, not a single prompt</span></li>
+        <li>Raise-only on sensitivity — <span>triage can escalate caution; it can never relax a protected classification</span></li>
+        <li>Fails closed — <span>ambiguous or unscored input defaults to the safest route, every time</span></li>
+        <li>The decision stays in-boundary — <span>even the routing judgment runs on a local model; no prompt leaves just to decide where it goes</span></li>
+      </ul>
+    </div>
+    <div class="visual rv">
+      <div class="card ctrls" aria-label="Session-aware triage">
+        <span class="grp">Router brain · session triage</span>
+        <div class="ctrl-row"><span>Sensitivity</span><span class="ctrl-chip on">confidential ↑</span></div>
+        <div class="ctrl-row"><span>Subject</span><span class="v">customer support</span></div>
+        <div class="ctrl-row"><span>Complexity</span><span class="v">medium · multi-turn</span></div>
+        <div class="cdiv"></div>
+        <span class="grp">Verdict · in your boundary</span>
+        <div class="ctrl-row"><span>Raise-only guard</span><span class="ctrl-chip lock">✓ caution raised</span></div>
+        <div class="ctrl-row"><span>Decision model</span><span class="v">local/llama3</span></div>
+        <div class="note">↳ even the routing decision never leaves the boundary</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sovereignty">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Provable sovereignty</span>
+      <h2>Sovereignty you can prove — not just promise.</h2>
+      <p>Every guarantee here is fail-closed and checkable in your own deployment. We say <em>provable in our tests</em>, not certified — there's no third-party attestation yet, and we won't imply one.</p>
+    </div>
+    <div class="caps">
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg></div><h3>A second, fail-closed PII gate</h3><p>A mandatory second detector — rules ∪ Microsoft Presidio NER, composite — catches PII the classifier missed and floors it in-boundary. Both gates must clear before anything leaves.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="8" cy="13" r="4"/><path d="M11 11l9-6M17 7l2 2"/></svg></div><h3>Signed, host-forgery-resistant audit</h3><p>An HMAC-signed decision chain — host-forgery-resistant when you hold the signing key off-host. Unsigned mode is clearly labeled; we don't dress it up as tamper-proof.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 7h11M7 4 4 7l3 3M20 17H9M17 14l3 3-3 3"/></svg></div><h3>De-identify by default</h3><p>A confidential prompt's detected PII is auto-tokenized before any cloud send; regulated work stays fully in-boundary. The safe transform is the default, not an opt-in.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Authenticated, SSRF-guarded egress</h3><p>Bearer-token API auth the moment Bastion binds beyond loopback, plus an SSRF guard on every outbound fetch. The boundary holds even when the network doesn't.</p></div>
+    </div>
+  </div>
+</section>
+
 <section id="how" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="wrap">
     <div class="sec-head rv">
@@ -452,10 +520,10 @@
       <p>Every prompt runs the same four-step lifecycle — fail-closed at each gate, so the safe path is the default path.</p>
     </div>
     <div class="steps">
-      <div class="step rv"><h3>Classify</h3><p>Each prompt is scored <b>public · internal · confidential · regulated</b> (rules + optional Microsoft Presidio NER), with explainable, redacted signals.</p></div>
+      <div class="step rv"><h3>Classify</h3><p>A session-aware triage brain scores each prompt <b>public · internal · confidential · regulated</b> across the conversation (rules ∪ Presidio NER, plus a fail-closed second PII gate), with explainable, redacted signals.</p></div>
       <div class="step rv"><h3>Enforce the boundary</h3><p>Regulated &amp; confidential data is <b>hard-blocked</b> to your boundary by default — fail-closed by design, with no policy violations observed across our internal test corpus.</p></div>
       <div class="step rv"><h3>Route by capability + cost</h3><p>The cheapest model that clears the quality bar for the task category. Local-first; escalate to cloud only when it actually pays off.</p></div>
-      <div class="step rv"><h3>Audit &amp; learn</h3><p>Every decision lands in a SHA-256 hash-chained trail. Flag a bad call and the correction sticks — and survives a restart.</p></div>
+      <div class="step rv"><h3>Audit &amp; learn</h3><p>Every decision lands in a SHA-256 hash-chained trail — HMAC-signed when you hold an off-host key. Flag a bad call and the correction sticks, versioned and reversible.</p></div>
     </div>
   </div>
 </section>
@@ -498,7 +566,7 @@
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-7"/></svg></div><h3>Capability + cost routing</h3><p>A transparent multi-factor score — quality · cost · boundary · latency — picks the cheapest model that clears the bar.</p></div>
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0110 0v3M5 11h14v9H5z"/></svg></div><h3>PII tokenization</h3><p>De-identify → send → rehydrate lets confidential work use a frontier model while the detected raw values stay in your boundary.</p></div>
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><h3>Governed web search</h3><p>In-boundary SearXNG with an egress governor: public queries go out, confidential/regulated are blocked — every egress audited.</p></div>
-      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/><path d="M9 4v16"/></svg></div><h3>Tamper-evident audit</h3><p>A SHA-256 hash-chained decision trail and a cost/savings ledger — a verifiable record of what ran where, and what you saved.</p></div>
+      <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/><path d="M9 4v16"/></svg></div><h3>Tamper-evident audit</h3><p>A SHA-256 hash-chained decision trail — HMAC-signed when you hold an off-host key — plus a cost/savings ledger: a verifiable record of what ran where, and what you saved.</p></div>
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/><path d="M12 7v5l3 2"/></svg></div><h3>Self-learning</h3><p>Flag a mis-route and the correction applies live — the learning loop only raises sensitivity automatically; lowering a protected classification requires explicit review.</p></div>
       <div class="cap rv"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H4z"/><path d="M2 20h20"/></svg></div><h3>Self-hosted &amp; BYOK</h3><p>Runs in your boundary on macOS, Linux or Windows. Binds to localhost, brings your own keys, and sends no telemetry back to us.</p></div>
     </div>
@@ -616,6 +684,55 @@
   </div>
 </section>
 
+<section id="learning">
+  <div class="wrap feature flip">
+    <div class="ftext rv">
+      <span class="eyebrow">In-boundary learning loop</span>
+      <h2>It learns your workloads — without your data ever leaving.</h2>
+      <p>Bastion adapts to how your teams actually use it, entirely in-boundary. One-click answer ratings tune a bounded, versioned, roll-back-able competency overlay per model and category; flagged corrections and a labeled prompt bank become few-shot examples that teach the triage brain. The honest limit: this is per-deployment learning — there's no cross-customer data flywheel, because your data never leaves. The adaptation is yours alone.</p>
+      <ul class="fbul">
+        <li>One-click ratings, bounded effect — <span>thumbs tune a per-(model, category) competency overlay that's versioned and roll-back-able</span></li>
+        <li>Corrections become teaching — <span>flagged mis-routes plus a labeled prompt bank turn into few-shot examples for the triage brain</span></li>
+        <li>Raise-only and reviewable — <span>auto-adjustments tighten; relaxing a protected classification still takes an explicit review</span></li>
+        <li>Yours alone, by design — <span>no cross-customer flywheel — your data never leaves, so the learning stays in your boundary</span></li>
+      </ul>
+    </div>
+    <div class="visual rv">
+      <div class="card ctrls" aria-label="In-boundary learning">
+        <span class="grp">Answer ratings · this deployment</span>
+        <div class="ctrl-row"><span>local/llama3 · support</span><span class="ctrl-chip lock">▲ tuned up</span></div>
+        <div class="ctrl-row"><span>cloud/kimi-k2 · code</span><span class="v">overlay v7 ▾</span></div>
+        <div class="ctrl-row"><span>Roll back overlay</span><span class="ctrl-chip">↩ v6</span></div>
+        <div class="cdiv"></div>
+        <span class="grp">Prompt bank · few-shot</span>
+        <div class="ctrl-row"><span>Labeled corrections</span><span class="v">teach the triage brain</span></div>
+        <div class="note">↳ per-deployment only — no cross-customer flywheel</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="prove" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="eyebrow">Prove it yourself</span>
+      <h2>Don't take our word for it. <span class="grad">Run the proof.</span></h2>
+      <p>Two commands turn the trust story into a report you generate yourself — offline, on your own corpus, with no connection back to us.</p>
+    </div>
+    <div class="prove-grid">
+      <div class="card prove-card rv">
+        <div class="cmd"><span><span class="p">$</span> npm run validate</span><button class="copy" data-cmd="npm run validate" type="button">Copy</button></div>
+        <p>A dated, offline, reproducible report — leak rate, measured savings versus an all-cloud baseline, and triage accuracy.</p>
+      </div>
+      <div class="card prove-card rv">
+        <div class="cmd"><span><span class="p">$</span> npm run prove:no-leak</span><button class="copy" data-cmd="npm run prove:no-leak" type="button">Copy</button></div>
+        <p>A self-serve red-team: 50+ adversarial PII prompts, asserting zero raw PII crosses the boundary by re-deriving the text that was actually sent.</p>
+      </div>
+    </div>
+    <p class="calc-note rv">Provable in our tests — 0 leaks over the corpus, fail-closed. That's self-validation you can reproduce, not a third-party audit: there's no external attestation yet, and we won't imply one.</p>
+  </div>
+</section>
+
 <section id="get-started">
   <div class="wrap">
     <div class="cta-band rv">
@@ -645,8 +762,11 @@
         <div class="foot-col">
           <h4>Product</h4>
           <a href="#cost">Savings calculator</a>
+          <a href="#router">Router brain</a>
           <a href="#deidentify">De-identify</a>
+          <a href="#sovereignty">Sovereignty</a>
           <a href="#how">How it works</a>
+          <a href="#prove">Prove it yourself</a>
           <a href="#architecture">Architecture</a>
         </div>
         <div class="foot-col">
