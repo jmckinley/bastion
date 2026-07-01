@@ -47,14 +47,16 @@
   /* nav */
   header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);background:rgba(10,13,19,.72);border-bottom:1px solid rgba(34,44,60,.7)}
   .nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
-  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;letter-spacing:-.02em}
-  .brand svg{width:30px;height:30px;display:block}
-  .brand small{font-weight:500;font-size:12px;color:var(--muted);letter-spacing:.02em;margin-left:2px}
-  .nav-links{display:flex;align-items:center;gap:30px}
-  .nav-links a{font-size:14.5px;color:var(--muted);font-weight:500;transition:color .15s}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;letter-spacing:-.02em;white-space:nowrap;flex:none}
+  .brand svg{width:30px;height:30px;display:block;flex:none}
+  .brand small{font-weight:500;font-size:12px;color:var(--muted);letter-spacing:.02em;margin-left:2px;white-space:nowrap}
+  .nav-links{display:flex;align-items:center;gap:20px;flex-wrap:nowrap}
+  .nav-links a{font-size:14.5px;color:var(--muted);font-weight:500;transition:color .15s;white-space:nowrap;flex:none}
   .nav-links a:hover{color:var(--text)}
   .nav-cta{padding:9px 16px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid var(--border2);color:var(--text)!important;font-size:14px}
   .nav-cta:hover{border-color:var(--accent)}
+  /* Keep the nav on one line: drop the brand tagline before the links collapse. */
+  @media(max-width:1080px){.brand small{display:none}}
   @media(max-width:820px){.nav-links a:not(.nav-cta){display:none}}
 
   /* hero */
