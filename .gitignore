@@ -1,0 +1,24 @@
+# Vector stores & sidecars (regenerable, may embed private content) — never commit
+*.rvf
+*.rvf.lock
+*.chunks.json
+
+# Secrets & connection records
+connections.json
+*.env
+.env*
+*sa_live*
+llm-backends.json
+
+# Runtime / build
+node_modules/
+*.log
+staging-*.log
+*.bak
+
+# OS
+.DS_Store
+
+# ruflo workspace artifacts
+.claude-flow/
+.ruvnet-brain/

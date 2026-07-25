@@ -1,0 +1,22 @@
+# /etc/systemd/system/bastion.service  (example — sanitized)
+# The Bastion trust router: OpenAI-compatible /v1 gateway, governed.
+# Secrets (incl. cloud BYOK key) come from the root-only EnvironmentFile, never inline.
+
+[Unit]
+Description=Bastion AI trust router (governed /v1 gateway)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=markt
+WorkingDirectory=/home/markt/bastion-app
+# Root-only file: ANTHROPIC_API_KEY=..., HMAC audit secret, etc. Mode 0600, owner root.
+EnvironmentFile=/etc/bastion/bastion.env
+ExecStart=/usr/bin/node /home/markt/bastion-app/server.js
+Restart=on-failure
+RestartSec=3
+# Governed, in-boundary: no need to listen beyond the host's own interfaces.
+
+[Install]
+WantedBy=multi-user.target

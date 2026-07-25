@@ -1,0 +1,24 @@
+# /etc/systemd/system/sovereign-rag.service  (example — sanitized)
+# The zero-egress RAG API + live console. Binds LOOPBACK ONLY; exposed to the
+# operator's tailnet via `tailscale serve` (tailnet-only HTTPS, not Funnel).
+
+[Unit]
+Description=Sovereign RAG service + live console (loopback; tailnet via Serve)
+After=network-online.target bastion.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=markt
+WorkingDirectory=/home/markt/rag-service
+# Bind loopback only — the LAN must never reach this directly.
+Environment=RAG_BIND=127.0.0.1
+Environment=RAG_PORT=8090
+# Bastion governs every model call:
+Environment=BASTION_URL=http://localhost:3000/v1
+ExecStart=/usr/bin/node /home/markt/rag-service/server.mjs
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

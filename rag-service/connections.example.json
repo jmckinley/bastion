@@ -1,0 +1,20 @@
+{
+  "connections": [
+    {
+      "id": "my-cloud",
+      "workspace": "my-cloud",
+      "daemon": "http://localhost:8000",
+      "filespaces": [],
+      "token": "sa_live:REPLACE_ME",
+      "status": "active"
+    },
+    {
+      "id": "media",
+      "workspace": "media",
+      "daemon": "http://localhost:8001",
+      "filespaces": [],
+      "token": "sa_live:REPLACE_ME",
+      "status": "active"
+    }
+  ]
+}
