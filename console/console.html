@@ -1,0 +1,546 @@
+<title>Sovereign AI Console</title>
+<style>
+  :root{
+    color-scheme: light dark;
+    --ink:#0E1218; --ink-2:#141A22; --ink-3:#1B222C; --line:#2A333F;
+    --paper:#E9ECF0; --paper-2:#F4F6F9; --paper-3:#FDFEFF;
+    --fg:#0E1218; --fg-soft:#48545F; --fg-faint:#7C8896;
+    --bg:var(--paper); --panel:var(--paper-3); --panel-2:var(--paper-2);
+    --border:#CBD2DB; --border-soft:#D9DFE6;
+    --brass:#B4853A; --brass-2:#C79A4B; --brass-ink:#5E4413;
+    --c-public:#5B7A9E; --c-internal:#3E8E7E; --c-confidential:#C7893E; --c-regulated:#B4453C;
+    --good:#3E8E7E; --crit:#B4453C; --warn:#C7893E;
+    --shadow:0 1px 2px rgba(14,18,24,.06),0 8px 24px -12px rgba(14,18,24,.14);
+    --radius:7px; --radius-s:5px;
+    --mono:ui-monospace,"JetBrains Mono","SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+      --fg:#E6EBF1; --fg-soft:#9DAAB8; --fg-faint:#68757F;
+      --bg:var(--ink); --panel:var(--ink-2); --panel-2:var(--ink-3);
+      --border:#2A333F; --border-soft:#222A34;
+      --brass:#C79A4B; --brass-2:#D9B061; --brass-ink:#F1D9A2;
+      --c-public:#7FA0C4; --c-internal:#54B29E; --c-confidential:#DBA85A; --c-regulated:#D4655B;
+      --good:#54B29E; --crit:#D4655B; --warn:#DBA85A;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -14px rgba(0,0,0,.6);
+  }}
+  :root[data-theme="light"]{color-scheme:light;--fg:#0E1218;--fg-soft:#48545F;--fg-faint:#7C8896;--bg:var(--paper);--panel:var(--paper-3);--panel-2:var(--paper-2);--border:#CBD2DB;--border-soft:#D9DFE6;--brass:#B4853A;--brass-2:#C79A4B;--brass-ink:#5E4413;--c-public:#5B7A9E;--c-internal:#3E8E7E;--c-confidential:#C7893E;--c-regulated:#B4453C;--good:#3E8E7E;--crit:#B4453C;--warn:#C7893E;--shadow:0 1px 2px rgba(14,18,24,.06),0 8px 24px -12px rgba(14,18,24,.14);}
+  :root[data-theme="dark"]{color-scheme:dark;--fg:#E6EBF1;--fg-soft:#9DAAB8;--fg-faint:#68757F;--bg:var(--ink);--panel:var(--ink-2);--panel-2:var(--ink-3);--border:#2A333F;--border-soft:#222A34;--brass:#C79A4B;--brass-2:#D9B061;--brass-ink:#F1D9A2;--c-public:#7FA0C4;--c-internal:#54B29E;--c-confidential:#DBA85A;--c-regulated:#D4655B;--good:#54B29E;--crit:#D4655B;--warn:#DBA85A;--shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px -14px rgba(0,0,0,.6);}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  h1,h2,h3{margin:0;text-wrap:balance;font-weight:640;letter-spacing:-.01em}
+  a{color:inherit}
+  ::selection{background:color-mix(in srgb,var(--brass) 32%,transparent)}
+  button{font-family:inherit;font-size:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  input,select,textarea{font-family:inherit;font-size:14px;color:var(--fg);background:var(--panel-2);border:1px solid var(--border);border-radius:7px;padding:9px 11px}
+  input:focus,select:focus,textarea:focus,:focus-visible{outline:2px solid var(--brass);outline-offset:1px;border-radius:3px}
+
+  .app{display:grid;grid-template-columns:230px 1fr;grid-template-rows:56px 1fr;grid-template-areas:"brand top" "nav main";height:100vh;}
+  .brand{grid-area:brand;display:flex;align-items:center;gap:10px;padding:0 18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--panel)}
+  .seal{width:26px;height:26px;flex:none;border-radius:5px;display:grid;place-items:center;background:linear-gradient(150deg,var(--brass-2),var(--brass));color:#1c1405;font-weight:800;box-shadow:inset 0 0 0 1px rgba(255,255,255,.18),0 1px 2px rgba(0,0,0,.3);font-family:var(--mono)}
+  .brand b{font-family:var(--mono);font-weight:680;letter-spacing:.14em;font-size:13px}
+  .brand span{font-size:10px;color:var(--fg-faint);letter-spacing:.16em;text-transform:uppercase}
+  .topbar{grid-area:top;display:flex;align-items:center;gap:16px;padding:0 18px;border-bottom:1px solid var(--border);background:var(--panel)}
+  .status{display:inline-flex;align-items:center;gap:8px;padding:5px 11px;border-radius:100px;font-size:12px;font-weight:600;border:1px solid var(--border);color:var(--fg-soft)}
+  .status .dot{width:7px;height:7px;border-radius:50%;background:var(--fg-faint)}
+  .status.live{color:var(--good);border-color:color-mix(in srgb,var(--good) 45%,var(--border));background:color-mix(in srgb,var(--good) 10%,transparent)}
+  .status.live .dot{background:var(--good);box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 22%,transparent)}
+  .status.demo{color:var(--c-confidential);border-color:color-mix(in srgb,var(--c-confidential) 45%,var(--border));background:color-mix(in srgb,var(--c-confidential) 10%,transparent)}
+  .status.demo .dot{background:var(--c-confidential)}
+  .topbar .spacer{flex:1}
+  .env{font-family:var(--mono);font-size:11.5px;color:var(--fg-soft);display:flex;gap:14px}
+  .env b{color:var(--fg);font-weight:600}
+  .tbtn{width:34px;height:34px;border-radius:7px;border:1px solid var(--border);display:grid;place-items:center;background:var(--panel-2);color:var(--fg-soft)}
+  .tbtn:hover{color:var(--fg);border-color:var(--brass)}
+  nav{grid-area:nav;border-right:1px solid var(--border);background:var(--panel);padding:14px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+  .nav-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-faint);padding:14px 12px 6px}
+  .nav-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:7px;color:var(--fg-soft);font-weight:520;font-size:13.5px;text-align:left;width:100%;position:relative}
+  .nav-item svg{width:17px;height:17px;flex:none;opacity:.85}
+  .nav-item:hover{background:var(--panel-2);color:var(--fg)}
+  .nav-item.active{background:color-mix(in srgb,var(--brass) 12%,transparent);color:var(--fg)}
+  .nav-item.active::before{content:"";position:absolute;left:-10px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--brass)}
+  .nav-item .tag{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--fg-faint)}
+  .nav-item.active .tag{color:var(--brass)}
+  main{grid-area:main;overflow-y:auto;padding:26px 30px 60px}
+  .view{display:none;animation:fade .35s ease;max-width:1160px}
+  .view.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.view,*{animation:none!important;transition:none!important}}
+  .head{margin-bottom:22px}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--brass);margin-bottom:7px}
+  .head h1{font-size:23px}
+  .head p{margin:6px 0 0;color:var(--fg-soft);max-width:62ch}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .row{display:flex;gap:14px;flex-wrap:wrap}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 9px;border-radius:5px;letter-spacing:.02em;white-space:nowrap}
+  .chip .sq{width:7px;height:7px;border-radius:2px}
+  .cls-public{color:var(--c-public);background:color-mix(in srgb,var(--c-public) 14%,transparent)}.cls-public .sq{background:var(--c-public)}
+  .cls-internal{color:var(--c-internal);background:color-mix(in srgb,var(--c-internal) 14%,transparent)}.cls-internal .sq{background:var(--c-internal)}
+  .cls-confidential{color:var(--c-confidential);background:color-mix(in srgb,var(--c-confidential) 15%,transparent)}.cls-confidential .sq{background:var(--c-confidential)}
+  .cls-regulated{color:var(--c-regulated);background:color-mix(in srgb,var(--c-regulated) 15%,transparent)}.cls-regulated .sq{background:var(--c-regulated)}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:100px;border:1px solid var(--border)}
+  .pill.in{color:var(--brass);border-color:color-mix(in srgb,var(--brass) 40%,var(--border));background:color-mix(in srgb,var(--brass) 9%,transparent)}
+  .pill.out{color:var(--fg-soft)}
+  .pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:7px;font-weight:580;font-size:13px;border:1px solid var(--border);background:var(--panel-2);color:var(--fg)}
+  .btn:hover{border-color:var(--brass);color:var(--fg)}
+  .btn.primary{background:linear-gradient(150deg,var(--brass-2),var(--brass));color:#1c1405;border:none;font-weight:640}
+  .btn.primary:hover{filter:brightness(1.05)}
+  .btn svg{width:15px;height:15px}
+  .btn.sm{padding:5px 10px;font-size:12px}
+  .muted{color:var(--fg-soft)}.tiny{font-size:11px}
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:20px}
+  .kpi{padding:14px 15px;border-radius:var(--radius);border:1px solid var(--border);background:var(--panel)}
+  .kpi .k{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint)}
+  .kpi .v{font-family:var(--mono);font-size:24px;font-weight:600;margin-top:9px;letter-spacing:-.02em}
+  .kpi .d{font-size:11px;margin-top:4px;color:var(--fg-soft);display:flex;align-items:center;gap:5px}
+  .kpi .v.brass{color:var(--brass)}
+  .up{color:var(--good)} .down{color:var(--crit)}
+  @media(max-width:1080px){.kpis{grid-template-columns:repeat(3,1fr)}}
+  .mapwrap{padding:0;overflow:hidden}
+  .maphead{display:flex;align-items:center;justify-content:space-between;padding:15px 18px;border-bottom:1px solid var(--border)}
+  .maphead h3{font-size:15px}
+  .legend{display:flex;gap:14px;font-size:11px;color:var(--fg-soft);flex-wrap:wrap}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:16px;height:0;border-top:2px solid;display:inline-block}
+  .map{display:grid;grid-template-columns:1fr 150px;gap:0;min-height:340px}
+  .zone-in{position:relative;margin:20px;border:1.5px solid var(--brass);border-radius:10px;background:repeating-linear-gradient(135deg,transparent,transparent 9px,color-mix(in srgb,var(--brass) 5%,transparent) 9px,color-mix(in srgb,var(--brass) 5%,transparent) 10px),color-mix(in srgb,var(--brass) 4%,var(--panel));padding:16px;box-shadow:inset 0 0 40px -20px var(--brass)}
+  .zone-tag{position:absolute;top:-9px;left:14px;background:var(--panel);padding:0 8px;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--brass);font-weight:600}
+  .zone-tag.seal::before{content:"◆ ";color:var(--brass)}
+  .nodes{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:8px}
+  .node{background:var(--panel);border:1px solid var(--border);border-radius:7px;padding:11px 12px}
+  .node.router{grid-column:1/-1;border-color:color-mix(in srgb,var(--brass) 40%,var(--border));background:color-mix(in srgb,var(--brass) 7%,var(--panel))}
+  .node .nm{font-weight:600;font-size:12.5px;display:flex;align-items:center;gap:7px}
+  .node .sub{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);margin-top:3px}
+  .ndot{width:7px;height:7px;border-radius:50%;background:var(--good);flex:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--good) 20%,transparent)}
+  .zone-out{margin:20px 20px 20px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:1px dashed var(--border);border-radius:10px;background:var(--panel-2)}
+  .zone-out .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--fg-faint);text-transform:uppercase}
+  .cloud{width:76px;height:76px;border-radius:14px;display:grid;place-items:center;border:1px solid var(--border);background:var(--panel);color:var(--fg-soft)}
+  .gate{writing-mode:vertical-rl;text-orientation:mixed;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;color:var(--brass);text-transform:uppercase;align-self:center;padding:0 2px}
+  .tablewrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);font-weight:600;padding:11px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+  td{padding:11px 14px;border-bottom:1px solid var(--border-soft);vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tbody tr:hover{background:color-mix(in srgb,var(--brass) 4%,transparent)}
+  td.mono,th.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .th-title{padding:15px 16px;font-size:14px;font-weight:620;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .pg{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:960px){.pg{grid-template-columns:1fr}}
+  .prompt-box{padding:16px}
+  .prompt-box textarea{width:100%;min-height:120px;resize:vertical;border-radius:8px;border:1px solid var(--border);background:var(--panel-2);color:var(--fg);padding:12px;font-family:var(--sans);font-size:14px;line-height:1.5}
+  .examples{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+  .ex{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;text-align:left;border:1px solid var(--border);background:var(--panel);width:100%}
+  .ex:hover{border-color:var(--brass)}
+  .ex .txt{flex:1;font-size:12.5px;color:var(--fg-soft)}
+  .card{padding:0;overflow:hidden;align-self:start}
+  .card .verdict{padding:15px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+  .card .verdict .t{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-faint)}
+  .drow{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--border-soft);gap:12px}
+  .drow:last-child{border-bottom:none}
+  .drow .l{font-size:12px;color:var(--fg-soft);display:flex;align-items:center;gap:8px}
+  .drow .r{font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:right}
+  .route-viz{display:flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;padding:14px 18px;flex-wrap:wrap;color:var(--fg-soft)}
+  .route-viz .step{padding:4px 8px;border-radius:5px;border:1px solid var(--border);background:var(--panel-2)}
+  .route-viz .step.on{border-color:var(--brass);color:var(--fg)}
+  .route-viz .arr{color:var(--fg-faint)}
+  .verified{color:var(--brass);display:inline-flex;align-items:center;gap:5px;font-weight:600}
+  .ladder{display:flex;flex-direction:column}
+  .rung{display:grid;grid-template-columns:150px 1fr auto;gap:16px;align-items:center;padding:15px 18px;border-bottom:1px solid var(--border-soft)}
+  .rung:last-child{border-bottom:none}
+  .rung .desc{font-size:12.5px;color:var(--fg-soft)}
+  .rung .rule{font-family:var(--mono);font-size:11.5px;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .badge{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:4px;border:1px solid var(--border);color:var(--fg-soft)}
+  .badge.block{color:var(--crit);border-color:color-mix(in srgb,var(--crit) 40%,var(--border))}
+  .badge.local{color:var(--brass);border-color:color-mix(in srgb,var(--brass) 40%,var(--border))}
+  .badge.deid{color:var(--c-confidential);border-color:color-mix(in srgb,var(--c-confidential) 40%,var(--border))}
+  .subtabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border)}
+  .subtab{padding:9px 14px;font-size:13px;font-weight:560;color:var(--fg-soft);border-bottom:2px solid transparent;margin-bottom:-1px}
+  .subtab.active{color:var(--fg);border-bottom-color:var(--brass)}
+  .subview{display:none}.subview.active{display:block}
+  .src{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border-soft)}
+  .src:last-child{border-bottom:none}
+  .src .ico{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;flex:none;background:var(--panel-2);border:1px solid var(--border);color:var(--fg-soft)}
+  .src .info{flex:1;min-width:0}
+  .src .info .n{font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .src .info .m{font-family:var(--mono);font-size:11px;color:var(--fg-faint);margin-top:4px;display:flex;gap:6px;flex-wrap:wrap}
+  .fs{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border-radius:5px;border:1px solid var(--border);color:var(--fg-soft)}
+  .form{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;padding:16px}
+  .field{display:flex;flex-direction:column;gap:5px}
+  .field label{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-faint);font-weight:600}
+  .field input,.field select{min-width:140px}
+  .note{display:flex;gap:10px;padding:12px 14px;border-radius:8px;font-size:12.5px;color:var(--fg-soft);background:color-mix(in srgb,var(--brass) 7%,var(--panel-2));border:1px solid color-mix(in srgb,var(--brass) 22%,var(--border));margin-bottom:16px}
+  .note svg{width:16px;height:16px;color:var(--brass);flex:none;margin-top:1px}
+  .ask-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:920px){.ask-grid{grid-template-columns:1fr}}
+  .askbox{padding:16px}
+  .askbox textarea{width:100%;min-height:88px;resize:vertical}
+  .answer{padding:16px 18px;font-size:13.5px;line-height:1.6}
+  .answer .cite{font-family:var(--mono);font-size:10.5px;color:var(--brass);background:color-mix(in srgb,var(--brass) 10%,transparent);padding:1px 5px;border-radius:4px}
+  .cites{display:flex;flex-wrap:wrap;gap:7px;padding:0 18px 16px}
+  .citechip{font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:6px;border:1px solid color-mix(in srgb,var(--brass) 35%,var(--border));color:var(--brass);background:color-mix(in srgb,var(--brass) 7%,transparent)}
+  .hits{padding:6px 0}
+  .hit{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border-soft);font-size:12px}
+  .hit:last-child{border-bottom:none}
+  .hit .sc{font-family:var(--mono);font-size:11px;color:var(--fg-faint);margin-left:auto}
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid color-mix(in srgb,var(--brass) 30%,transparent);border-top-color:var(--brass);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .receipt{margin:12px 16px;padding:11px 13px;border-radius:8px;font-family:var(--mono);font-size:11.5px;color:var(--good);border:1px solid color-mix(in srgb,var(--good) 35%,var(--border));background:color-mix(in srgb,var(--good) 8%,transparent)}
+  .bars{display:flex;flex-direction:column;gap:14px;padding:18px}
+  .barrow{display:grid;grid-template-columns:150px 1fr 80px;gap:14px;align-items:center;font-size:12.5px}
+  .track{height:22px;border-radius:5px;background:var(--panel-2);border:1px solid var(--border-soft);overflow:hidden;position:relative}
+  .track i{display:block;height:100%}
+  .barrow .amt{font-family:var(--mono);text-align:right;font-weight:600}
+  .split{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+  @media(max-width:960px){.split{grid-template-columns:1fr}}
+  .feed{padding:6px 0}
+  .fitem{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border-soft);font-size:12.5px}
+  .fitem:last-child{border-bottom:none}
+  .fitem .ago{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--fg-faint)}
+</style>
+
+<div class="app">
+  <div class="brand"><div class="seal">S</div><div><b>SOVEREIGN</b><br><span>trust console</span></div></div>
+
+  <div class="topbar">
+    <span class="status" id="apistatus"><span class="dot"></span><span id="apitext">checking…</span></span>
+    <div class="spacer"></div>
+    <div class="env"><span>host <b>bastion-01</b></span><span>infra <b>Nutanix AHV</b></span><span>audit <b class="verified">signed</b></span></div>
+    <button class="tbtn" id="theme" title="Toggle theme" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19" stroke-linecap="round"/></svg></button>
+  </div>
+
+  <nav id="nav">
+    <div class="nav-label">Operate</div>
+    <button class="nav-item active" data-v="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Overview</button>
+    <button class="nav-item" data-v="playground"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16M4 12h16M4 19h9" stroke-linecap="round"/><circle cx="18" cy="19" r="2.5"/></svg>Playground <span class="tag">/v1</span></button>
+    <div class="nav-label">Govern</div>
+    <button class="nav-item" data-v="fleet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r="1"/><circle cx="7" cy="17" r="1"/></svg>Fleet <span class="tag" id="nav-fleet">5</span></button>
+    <button class="nav-item" data-v="policy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg>Policy</button>
+    <button class="nav-item" data-v="knowledge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5.5A1.5 1.5 0 015.5 4H11v16H5.5A1.5 1.5 0 014 18.5z"/><path d="M20 5.5A1.5 1.5 0 0018.5 4H13v16h5.5a1.5 1.5 0 001.5-1.5z"/></svg>Knowledge</button>
+    <button class="nav-item" data-v="audit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 13l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>Audit</button>
+    <div class="nav-label">Business</div>
+    <button class="nav-item" data-v="cost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19V5M4 15l5-4 4 3 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>Cost &amp; Savings</button>
+  </nav>
+
+  <main>
+    <!-- OVERVIEW -->
+    <section class="view active" id="v-overview">
+      <div class="head"><div class="eyebrow">Single pane of glass</div><h1>Everything sovereign, at a glance</h1><p>Live view of the trust boundary — what stayed in, what was allowed out, and the proof behind it.</p></div>
+      <div class="kpis">
+        <div class="kpi"><div class="k">Requests</div><div class="v" id="k-req">—</div><div class="d muted">audited decisions</div></div>
+        <div class="kpi"><div class="k">In-boundary</div><div class="v brass" id="k-inb">—</div><div class="d muted">served locally</div></div>
+        <div class="kpi"><div class="k">Sensitive → cloud</div><div class="v" id="k-leak">—</div><div class="d muted">hard-blocked</div></div>
+        <div class="kpi"><div class="k">Cloud spend</div><div class="v" id="k-spend">—</div><div class="d muted">public only</div></div>
+        <div class="kpi"><div class="k">Saved vs frontier</div><div class="v brass" id="k-saved">—</div><div class="d"><span class="up">▲</span> local + cache</div></div>
+        <div class="kpi"><div class="k">Median latency</div><div class="v" id="k-lat">—</div><div class="d muted">gpt-oss warm</div></div>
+      </div>
+      <div class="panel mapwrap">
+        <div class="maphead"><h3>Trust boundary</h3><div class="legend">
+          <span><i style="border-color:var(--brass)"></i> stays in-boundary</span>
+          <span><i style="border-color:var(--c-public);border-top-style:dashed"></i> allowed out (public)</span>
+          <span><i style="border-color:var(--c-regulated)"></i> blocked</span></div></div>
+        <div class="map">
+          <div class="zone-in"><div class="zone-tag seal">SOVEREIGN BOUNDARY · NUTANIX AHV</div>
+            <div class="nodes">
+              <div class="node router"><div class="nm"><span class="ndot"></span> Bastion trust router</div><div class="sub">bastion-01 · classify → policy → route · signed audit</div></div>
+              <div class="node"><div class="nm"><span class="ndot"></span> gpt-oss:120b</div><div class="sub">Spark GB10 · sovereign default</div></div>
+              <div class="node"><div class="nm"><span class="ndot"></span> qwen2.5-32b · llama-70b</div><div class="sub">Spark · fallback ladder</div></div>
+              <div class="node"><div class="nm"><span class="ndot"></span> qwen2.5-7b</div><div class="sub">Nutanix RTX 2000 Ada</div></div>
+              <div class="node"><div class="nm"><span class="ndot" style="background:var(--brass);box-shadow:0 0 0 3px color-mix(in srgb,var(--brass) 22%,transparent)"></span> RVF knowledge index</div><div class="sub">local ONNX · witness-chained</div></div>
+            </div></div>
+          <div class="zone-out"><div class="lbl">outside</div>
+            <div class="cloud"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 18a4 4 0 01-.5-8 5.5 5.5 0 0110.6-1.4A3.8 3.8 0 0118 18z"/></svg></div>
+            <div style="text-align:center"><div style="font-weight:600;font-size:12.5px">Claude</div><div class="tiny muted">public only · de-identified</div></div>
+            <div class="gate">◆ governance gate</div></div>
+        </div>
+      </div>
+      <div class="split" style="margin-top:18px">
+        <div class="panel"><div class="th-title">Recent decisions</div><div class="feed" id="ov-recent"><div class="fitem"><span class="spin"></span> loading…</div></div></div>
+        <div class="panel"><div class="th-title">Boundary integrity</div>
+          <div style="padding:16px 18px;display:flex;flex-direction:column;gap:14px">
+            <div class="drow" style="padding:0"><div class="l">Audit chain</div><div class="r verified" id="ov-chain">—</div></div>
+            <div class="drow" style="padding:0"><div class="l">Last red-team (prove:no-leak)</div><div class="r" style="color:var(--good)">PASS · 0 / 56</div></div>
+            <div class="drow" style="padding:0"><div class="l">PII detector (Presidio)</div><div class="r">healthy · 19ms</div></div>
+            <div class="drow" style="padding:0"><div class="l">Governed search</div><div class="r">SearXNG · egress-gated</div></div>
+          </div></div>
+      </div>
+    </section>
+
+    <!-- PLAYGROUND -->
+    <section class="view" id="v-playground">
+      <div class="head"><div class="eyebrow">OpenAI-compatible · every call governed</div><h1>Playground</h1><p>Send a prompt and watch the governance verdict form: classify → policy → route. The same engine that fronts <span class="mono">/v1/chat/completions</span>.</p></div>
+      <div class="pg">
+        <div>
+          <div class="panel prompt-box"><textarea id="pg-input">Patient John Doe, SSN 123-45-6789, diagnosed with type 2 diabetes. Draft a one-line clinical care summary.</textarea>
+            <div class="row" style="margin-top:12px;justify-content:space-between;align-items:center"><span class="tiny muted">De-identify before egress <b class="mono" style="color:var(--brass)">on</b></span>
+              <button class="btn primary" id="pg-run"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9z" stroke-linejoin="round"/></svg> Route prompt</button></div></div>
+          <div style="font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-faint);margin:26px 0 12px;font-weight:600">Try a classification</div>
+          <div class="examples" id="pg-examples"></div>
+        </div>
+        <div class="panel card" id="pg-card">
+          <div class="verdict"><span class="t">Decision card</span><span class="chip cls-regulated" id="pg-sens"><span class="sq"></span>REGULATED</span></div>
+          <div class="route-viz" id="pg-route"><span class="step on">classify</span><span class="arr">→</span><span class="step on">policy</span><span class="arr">→</span><span class="step on">route</span><span class="arr">→</span><span class="step on">audit</span></div>
+          <div class="drow"><div class="l">Model</div><div class="r" id="pg-model">gpt-oss:120b</div></div>
+          <div class="drow"><div class="l">Boundary</div><div class="r" id="pg-boundary"><span class="verified">◆ customer</span></div></div>
+          <div class="drow"><div class="l">Cloud escalation</div><div class="r" id="pg-esc" style="color:var(--crit)">BLOCKED</div></div>
+          <div class="drow"><div class="l">PII de-identified</div><div class="r" id="pg-pii">1 · [[SSN_1]]</div></div>
+          <div class="drow"><div class="l">Cost</div><div class="r" id="pg-cost">$0.00</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLEET -->
+    <section class="view" id="v-fleet">
+      <div class="head"><div class="eyebrow">Model backends</div><h1>Fleet</h1><p>Every model the router can reach — the in-boundary capability ladder plus governed cloud. Sensitive work never leaves the first group.</p></div>
+      <div class="panel tablewrap"><table>
+        <thead><tr><th>Model</th><th>Host</th><th>Boundary</th><th class="num">Capability</th><th>State</th></tr></thead>
+        <tbody id="fleet-body"><tr><td colspan="5" class="muted" style="padding:16px"><span class="spin"></span> loading…</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <!-- POLICY -->
+    <section class="view" id="v-policy">
+      <div class="head"><div class="eyebrow">Policy as code · fail-closed</div><h1>Data sovereignty policy</h1><p>The more sensitive the data, the tighter the boundary it may run in. Edited here, enforced on every request, provable in the audit.</p></div>
+      <div class="panel ladder" id="pol-ladder"><div class="rung"><span class="spin"></span></div></div>
+      <div class="split" style="margin-top:16px">
+        <div class="panel"><div class="th-title">Routing strategy</div><div style="padding:16px 18px;display:flex;flex-direction:column;gap:13px" id="pol-strat"><div class="drow" style="padding:0"><div class="l">loading…</div><div class="r"></div></div></div></div>
+        <div class="panel"><div class="th-title">Policy simulator</div><div style="padding:16px 18px">
+          <div class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01" stroke-linecap="round"/></svg><div>Dry-run a policy change against last week's traffic <b>before</b> it goes live — see which requests would re-route, and prove nothing sensitive gains a cloud path.</div></div>
+          <button class="btn primary" style="margin-top:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M5 3l14 9-14 9z" stroke-linejoin="round"/></svg> Run simulation</button></div></div>
+      </div>
+    </section>
+
+    <!-- KNOWLEDGE (live) -->
+    <section class="view" id="v-knowledge">
+      <div class="head"><div class="eyebrow">Zero-egress RAG · stream, don't copy</div><h1>Knowledge</h1><p>Connect a LucidLink workspace, choose what to index, then ask — files stream in-boundary, only local vectors live in the system, and every answer cites its source.</p></div>
+      <div class="subtabs" id="k-tabs"><button class="subtab active" data-k="conn">Connections</button><button class="subtab" data-k="content">Content &amp; index</button><button class="subtab" data-k="ask">Ask</button></div>
+
+      <div class="subview active" id="k-conn">
+        <div class="note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg><div>Each connection is one LucidLink workspace with its own dedicated in-boundary daemon. The service-account token is used per request and stored root-only on <span class="mono">bastion-01</span> — never in the browser, never returned by the API.</div></div>
+        <div class="panel"><div class="th-title">Workspaces</div><div id="conn-list"><div class="src"><span class="muted"><span class="spin"></span> loading…</span></div></div></div>
+        <div class="panel" style="margin-top:16px"><div class="th-title">Add a connection</div>
+          <div class="form"><div class="field"><label>Workspace</label><input id="c-ws" placeholder="e.g. media"></div>
+            <div class="field" style="flex:1"><label>Service-account token</label><input id="c-tok" placeholder="sa_live:…" style="width:100%"></div>
+            <button class="btn primary" id="c-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>Connect</button></div>
+          <div id="c-result" style="padding:0 16px 14px"></div></div>
+      </div>
+
+      <div class="subview" id="k-content">
+        <div class="panel"><div class="th-title">Index content</div>
+          <div class="form"><div class="field"><label>Connection</label><select id="i-conn"></select></div>
+            <div class="field"><label>Filespace</label><select id="i-fs"></select></div>
+            <div class="field"><label>Sensitivity</label><select id="i-sens"><option value="public">public</option><option value="internal">internal</option><option value="confidential" selected>confidential</option><option value="regulated">regulated</option></select></div>
+            <div class="field"><label>Path</label><input id="i-path" value="/" style="min-width:90px"></div>
+            <div class="field"><label>Depth</label><input id="i-depth" value="0" style="min-width:60px"></div>
+            <button class="btn primary" id="i-run"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>Index</button></div>
+          <div id="i-result" style="padding:0 16px 14px"></div></div>
+        <div class="panel" style="margin-top:16px"><div class="th-title">Library <span class="mono tiny muted" id="lib-store"></span></div>
+          <div class="tablewrap"><table><thead><tr><th>Document</th><th>Class</th><th class="num">Chunks</th><th>Provenance</th><th></th></tr></thead><tbody id="lib-body"><tr><td colspan="5" class="muted" style="padding:16px">Loading…</td></tr></tbody></table></div>
+          <div id="forget-receipt"></div></div>
+        <div class="note" style="margin-top:14px;margin-bottom:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9"/></svg><div><b>Forget</b> purges the vectors and chunk text and issues a signed erasure receipt — GDPR right-to-be-forgotten in one click, provable via the witness chain.</div></div>
+      </div>
+
+      <div class="subview" id="k-ask">
+        <div class="ask-grid">
+          <div>
+            <div class="panel askbox"><div class="field" style="margin-bottom:10px"><label>Knowledge store</label><select id="a-store"></select></div>
+              <textarea id="a-q">What is the Application Delivery Framework v0.5 about?</textarea>
+              <div style="display:flex;gap:8px;margin-top:12px;justify-content:space-between;align-items:center">
+                <button class="btn sm" id="a-prev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3" stroke-linecap="round"/></svg>Preview retrieval</button>
+                <button class="btn primary" id="a-ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9z" stroke-linejoin="round"/></svg>Ask</button></div></div>
+            <div class="panel" id="prev-panel" style="margin-top:14px;display:none"><div class="th-title">Retrieved chunks <span class="tiny muted">no model call</span></div><div class="hits" id="prev-hits"></div></div>
+          </div>
+          <div class="panel card" id="ans-card">
+            <div class="verdict"><span class="t">Answer &amp; decision card</span><span id="a-sens" class="chip cls-regulated"><span class="sq"></span>—</span></div>
+            <div class="answer" id="a-answer"><span class="muted">Ask a question to see a cited answer and its governance verdict.</span></div>
+            <div class="cites" id="a-cites"></div>
+            <div class="drow"><span class="l">Model</span><span class="r" id="a-model">—</span></div>
+            <div class="drow"><span class="l">Boundary</span><span class="r" id="a-boundary">—</span></div>
+            <div class="drow"><span class="l">Cost</span><span class="r" id="a-cost">—</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUDIT -->
+    <section class="view" id="v-audit">
+      <div class="head"><div class="eyebrow">Tamper-evident · HMAC-signed</div><h1>Audit &amp; compliance</h1><p>Every routing decision, hash-chained and signed off-host. Filter it, verify it, or run the adversarial red-team on demand.</p></div>
+      <div class="row" style="justify-content:space-between;margin-bottom:14px;align-items:center">
+        <div class="row" style="gap:8px"><span class="chip cls-regulated"><span class="sq"></span>REGULATED</span><span class="chip cls-confidential"><span class="sq"></span>CONFIDENTIAL</span><span class="chip cls-internal"><span class="sq"></span>INTERNAL</span><span class="chip cls-public"><span class="sq"></span>PUBLIC</span></div>
+        <div class="row" style="gap:8px"><button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9"/></svg> Verify chain</button><button class="btn primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/></svg> Run prove:no-leak</button></div></div>
+      <div class="panel tablewrap"><table><thead><tr><th>Time</th><th>Class</th><th>Model</th><th>Boundary</th><th class="num">Cost</th><th>Entry hash</th></tr></thead><tbody id="audit-body"><tr><td colspan="6" class="muted" style="padding:16px"><span class="spin"></span> loading…</td></tr></tbody></table></div>
+    </section>
+
+    <!-- COST -->
+    <section class="view" id="v-cost">
+      <div class="head"><div class="eyebrow">Sovereignty that pays for itself</div><h1>Cost &amp; savings</h1><p>What you spent versus routing every request to a frontier cloud model. Local inference, response cache, and compression all count.</p></div>
+      <div class="kpis" style="grid-template-columns:repeat(3,1fr)">
+        <div class="kpi"><div class="k">Actual cloud spend</div><div class="v" id="c-spend">—</div><div class="d muted">public only</div></div>
+        <div class="kpi"><div class="k">All-frontier baseline</div><div class="v" id="c-base">—</div><div class="d muted">if every call went to Claude</div></div>
+        <div class="kpi"><div class="k">Saved</div><div class="v brass" id="c-savedpct">—</div><div class="d"><span class="up">▲</span> <span id="c-savedabs">—</span> kept</div></div>
+      </div>
+      <div class="panel"><div class="th-title">Where the requests actually ran</div><div class="bars">
+        <div class="barrow"><span>gpt-oss:120b</span><div class="track"><i style="width:71%;background:linear-gradient(90deg,var(--brass),var(--brass-2))"></i></div><span class="amt">$0</span></div>
+        <div class="barrow"><span>qwen · llama (local)</span><div class="track"><i style="width:15%;background:var(--c-internal)"></i></div><span class="amt">$0</span></div>
+        <div class="barrow"><span>Nutanix Ada 7b</span><div class="track"><i style="width:6%;background:var(--c-internal)"></i></div><span class="amt">$0</span></div>
+        <div class="barrow"><span>cache hit · 0 egress</span><div class="track"><i style="width:5%;background:var(--good)"></i></div><span class="amt">$0</span></div>
+        <div class="barrow"><span>Claude (public)</span><div class="track"><i style="width:3%;background:var(--c-public)"></i></div><span class="amt" id="c-cloudbar">—</span></div>
+      </div></div>
+    </section>
+  </main>
+</div>
+
+<script>
+const API = "http://localhost:8090";
+let LIVE = false;
+
+const DEMO = {
+  overview:{kpis:{requests:2418,inBoundaryPct:91.4,cloudSpendUsd:3.09,savedUsd:212,leaks:0,medianLatencyMs:1200},
+    recent:[{sensitivity:"regulated",model:"gpt-oss:120b",boundary:"customer",cost:"0"},{sensitivity:"public",model:"claude-opus-4.8",boundary:"third_party",cost:"0.0021"},{sensitivity:"confidential",model:"gpt-oss:120b",boundary:"customer",cost:"0"},{sensitivity:"internal",model:"gpt-oss:120b",boundary:"customer",cost:"0"},{sensitivity:"regulated",model:"gpt-oss:120b",boundary:"customer",cost:"0"}],
+    integrity:{auditChain:"signed",entries:2418}},
+  fleet:[{id:"selfhosted/gpt-oss-120b",model:"gpt-oss:120b",host:"Spark GB10 · .234",boundary:"customer",capability:88,state:"resident"},
+    {id:"selfhosted/llama-3.1-70b",model:"llama-3.1-70b",host:"Spark · .231",boundary:"customer",capability:78,state:"warm"},
+    {id:"selfhosted/qwen2.5-32b",model:"qwen2.5-32b",host:"Spark · .231",boundary:"customer",capability:72,state:"warm"},
+    {id:"local/qwen2.5-7b",model:"qwen2.5-7b",host:"Nutanix Ada · .243",boundary:"customer",capability:60,state:"resident"},
+    {id:"cloud/claude-opus-4-8",model:"claude-opus-4.8",host:"Anthropic · cloud",boundary:"third_party",capability:96,state:"byok"}],
+  policy:{name:"data-sovereignty-default",routingStrategy:"sovereignty",minCompetency:0,deidentifyByDefault:true,
+    tiers:[{sensitivity:"public",allowLocalities:["local","self_hosted","cloud"],cloudEscalation:true},
+      {sensitivity:"internal",allowLocalities:["local","self_hosted","cloud"],cloudEscalation:true},
+      {sensitivity:"confidential",allowLocalities:["local","self_hosted","cloud"],cloudEscalation:true,deidentify:true},
+      {sensitivity:"regulated",allowLocalities:["local","self_hosted"],cloudEscalation:false}]},
+  audit:[{ts:"00:21:07",sensitivity:"regulated",model:"gpt-oss:120b",boundary:"customer",cost:"0",hash:"9f3a…c0d6"},
+    {ts:"00:20:44",sensitivity:"public",model:"claude-opus",boundary:"third_party",cost:"0.0021",hash:"c0d6…12ab"},
+    {ts:"00:20:31",sensitivity:"confidential",model:"gpt-oss:120b",boundary:"customer",cost:"0",hash:"12ab…7f55"},
+    {ts:"00:19:58",sensitivity:"regulated",model:"gpt-oss:120b",boundary:"customer",cost:"0",hash:"7f55…be20"},
+    {ts:"00:19:12",sensitivity:"internal",model:"gpt-oss:120b",boundary:"customer",cost:"0",hash:"be20…4d81"}],
+  connections:[{id:"my-cloud",workspace:"my-cloud",daemon:"http://localhost:8000",status:"linked",filespaces:["agenticow","ai-commander","app-buckets","markt-ibm","stronghold-claude-code-local","stronghold-pilot01"]},
+    {id:"media",workspace:"media",daemon:"http://localhost:8001",status:"linked",filespaces:["archive","music","sharefile","video"]}],
+  library:{archive:[{source:"/Application Delivery Framework v0.5.pptx",chunks:51,sensitivity:"regulated",provenanceId:"a3f1"},{source:"/2011 Exec Comp vApproved.pptx",chunks:56,sensitivity:"regulated",provenanceId:"77c2"},{source:"/CALL - 2009 Plan Approval vFinal Almost.pptx",chunks:52,sensitivity:"regulated",provenanceId:"9d21"},{source:"/Architects Meeting - July 08.pptx",chunks:50,sensitivity:"regulated",provenanceId:"1af0"},{source:"/Photos/ (catalog)",chunks:1,sensitivity:"regulated",provenanceId:"c6b8"}]},
+  retrieval:[{source:"/Application Delivery Framework v0.5.pptx",score:0.236,snippet:"…holistic First Mile access strategy chosen before hardware/network/device…"},{source:"/Architects Meeting - July 08.pptx",score:0.017,snippet:"…architecture review of application delivery models…"}],
+  query:{answer:"The <b>Application Delivery Framework v0.5</b> introduces an on-demand approach to delivering applications; it argues the traditional PC-centric view yields costly, inflexible connections <span class='cite'>†2</span>, and proposes a holistic strategy placing the access strategy ahead of hardware, network, and device — improving TCO, performance, security, availability so IT operates like an on-demand service provider <span class='cite'>†1</span>.",sources:[{path:"/Application Delivery Framework v0.5.pptx",snippet:"holistic First Mile strategy"},{path:"/Application Delivery Framework v0.5.pptx",snippet:"on-demand service provider"}],verdict:{sensitivity:"regulated",model:"selfhosted/gpt-oss-120b",boundary:"customer",cost:"0"}}
+};
+
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function jget(path){const c=new AbortController();const t=setTimeout(()=>c.abort(),4000);
+  try{const r=await fetch(API+path,{signal:c.signal});if(!r.ok)throw 0;return await r.json();}finally{clearTimeout(t);}}
+async function jpost(path,body,ms){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms||200000);
+  try{const r=await fetch(API+path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),signal:c.signal});if(!r.ok)throw 0;return await r.json();}finally{clearTimeout(t);}}
+const arr=(r,...keys)=>Array.isArray(r)?r:(r&&keys.map(k=>r[k]).find(Array.isArray))||null;
+const clsChip=c=>{const u=(c||"confidential").toUpperCase().slice(0,4);return `<span class="chip cls-${c}"><span class="sq"></span>${u}</span>`;};
+const bnd=b=>b==="customer"?'<span class="verified">◆ customer</span>':(b||"—").replace("third_party","third-party");
+const cost=c=>(c==="0"||c===0)?'$0.00':("$"+c);
+
+async function detect(){const s=document.getElementById("apistatus"),t=document.getElementById("apitext");
+  try{await jget("/health");LIVE=true;s.className="status live";t.textContent="API live · in-boundary";}
+  catch{LIVE=false;s.className="status demo";t.textContent="demo data — API offline";}}
+
+// ---- OVERVIEW ----
+async function loadOverview(){let d;try{d=LIVE?await jget("/overview"):DEMO.overview;}catch{d=DEMO.overview;}
+  const k=d.kpis||{};const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set("k-req",(k.requests||0).toLocaleString());set("k-inb",(k.inBoundaryPct!=null?k.inBoundaryPct.toFixed(1):"—")+"%");
+  set("k-leak",k.leaks!=null?k.leaks:"—");set("k-spend","$"+(k.cloudSpendUsd!=null?(+k.cloudSpendUsd).toFixed(2):"—"));
+  set("k-saved","$"+(k.savedUsd!=null?Math.round(k.savedUsd).toLocaleString():"—"));set("k-lat",k.medianLatencyMs?(k.medianLatencyMs/1000).toFixed(1)+"s":"—");
+  const rec=d.recent||[];document.getElementById("ov-recent").innerHTML = rec.length? rec.map(r=>`<div class="fitem">${clsChip(r.sensitivity)} → <span class="mono">${r.model}</span> ${r.boundary==="customer"?'<span class="verified">◆ in-boundary</span>':'<span class="mono tiny muted">$'+r.cost+'</span>'}</div>`).join("") : '<div class="fitem muted">no decisions yet</div>';
+  const ig=d.integrity||{};document.getElementById("ov-chain").textContent="◆ "+(ig.auditChain||"—")+" · "+(ig.entries||0)+" entries";}
+
+// ---- FLEET ----
+async function loadFleet(){let f;try{f=LIVE?arr(await jget("/fleet"),"fleet","models"):DEMO.fleet;}catch{f=null;} f=f||DEMO.fleet;
+  document.getElementById("nav-fleet").textContent=f.length;
+  const st=s=>s==="resident"?'<span class="chip cls-internal"><span class="sq"></span>RESIDENT</span>':s==="byok"?'<span class="chip cls-public"><span class="sq"></span>BYOK</span>':`<span class="chip" style="color:var(--fg-faint);background:var(--panel-2)"><span class="sq" style="background:var(--fg-faint)"></span>${(s||"warm").toUpperCase()}</span>`;
+  document.getElementById("fleet-body").innerHTML=f.map(m=>`<tr><td><b>${m.model}</b></td><td class="mono">${m.host||"—"}</td><td>${m.boundary==="customer"?'<span class="pill in"><span class="dot"></span>customer</span>':'<span class="pill out"><span class="dot"></span>third-party</span>'}</td><td class="mono">${m.capability!=null?m.capability:"—"}</td><td>${st(m.state)}</td></tr>`).join("");}
+
+// ---- POLICY ----
+async function loadPolicy(){let p;try{p=LIVE?await jget("/policy"):DEMO.policy;}catch{p=DEMO.policy;} p=p||DEMO.policy;
+  const desc={public:"Non-sensitive. May use the best available model, cloud included.",internal:"Company-internal. Prefers in-boundary; cloud allowed when it clearly wins.",confidential:"Trade secrets, contracts. Stays in-boundary; PII tokenized before any egress.",regulated:"PII / PHI / secrets. Hard-blocked from anything outside the customer boundary."};
+  const rule=t=>{const cloud=t.cloudEscalation;const deid=t.deidentify;let b='';
+    if((t.allowLocalities||[]).includes("cloud")&&cloud){b+='<span class="badge local">local</span><span class="badge">cloud ok</span>';}
+    else{b+='<span class="badge local">in-boundary</span>'+(deid?'<span class="badge deid">de-identify</span>':'<span class="badge block">cloud blocked</span>');}
+    return b;};
+  document.getElementById("pol-ladder").innerHTML=(p.tiers||DEMO.policy.tiers).map(t=>`<div class="rung">${clsChip(t.sensitivity).replace(/[A-Z]{4}/,t.sensitivity.toUpperCase())}<span class="desc">${desc[t.sensitivity]||""}</span><span class="rule">${rule(t)}</span></div>`).join("");
+  document.getElementById("pol-strat").innerHTML=`
+    <div class="drow" style="padding:0"><div class="l">Active strategy</div><div class="r verified">${p.routingStrategy||"—"}</div></div>
+    <div class="drow" style="padding:0"><div class="l">Default in-boundary model</div><div class="r">gpt-oss:120b</div></div>
+    <div class="drow" style="padding:0"><div class="l">De-identify by default</div><div class="r" style="color:var(--brass)">${p.deidentifyByDefault?"on · confidential+":"off"}</div></div>
+    <div class="drow" style="padding:0"><div class="l">Min competency floor</div><div class="r">${p.minCompetency!=null?p.minCompetency:0}</div></div>`;}
+
+// ---- AUDIT ----
+async function loadAudit(){let a;try{a=LIVE?arr(await jget("/audit?limit=50"),"audit","entries","rows"):DEMO.audit;}catch{a=null;} a=a||DEMO.audit;
+  document.getElementById("audit-body").innerHTML = a.length? a.map(r=>`<tr><td class="mono">${(r.ts||"").toString().replace("T"," ").slice(0,19)}</td><td>${clsChip(r.sensitivity)}</td><td class="mono">${r.model||"—"}</td><td class="mono ${r.boundary==="customer"?"verified":"muted"}">${r.boundary==="customer"?"◆ customer":(r.boundary||"—").replace("third_party","third-party")}</td><td class="mono">${cost(r.cost)}</td><td class="mono tiny muted">${(r.hash||"—")}</td></tr>`).join("") : '<tr><td colspan="6" class="muted" style="padding:16px">no entries</td></tr>';}
+
+// ---- COST (reuses overview) ----
+async function loadCost(){let d;try{d=LIVE?await jget("/overview"):DEMO.overview;}catch{d=DEMO.overview;}
+  const k=d.kpis||{};const spend=+k.cloudSpendUsd||0, saved=+k.savedUsd||0, base=spend+saved;
+  const pct=base>0?(saved/base*100):0;const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set("c-spend","$"+spend.toFixed(2));set("c-base","$"+Math.round(base).toLocaleString());set("c-savedpct",pct.toFixed(1)+"%");set("c-savedabs","$"+Math.round(saved).toLocaleString());set("c-cloudbar","$"+spend.toFixed(0));}
+
+// ---- KNOWLEDGE (live) ----
+let CONNS=[];
+async function loadConnections(){let cr;try{cr=LIVE?await jget("/connections"):DEMO.connections;}catch{cr=DEMO.connections;}
+  CONNS=Array.isArray(cr)?cr:(cr.connections||DEMO.connections);
+  document.getElementById("conn-list").innerHTML=CONNS.map(c=>`<div class="src"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg></div><div class="info"><div class="n">${c.workspace} <span class="fs">daemon ${(c.daemon||"").split(":").pop()}</span></div><div class="m">${(c.filespaces||[]).map(f=>`<span class="fs">${f}</span>`).join("")||'<span class="muted tiny">no filespaces</span>'}</div></div><span class="pill in"><span class="dot"></span>${c.status||"linked"}</span></div>`).join("");
+  const ic=document.getElementById("i-conn");if(ic){ic.innerHTML=CONNS.map(c=>`<option value="${c.id}">${c.workspace}</option>`).join("");syncFs();}}
+function syncFs(){const c=CONNS.find(x=>x.id===document.getElementById("i-conn").value)||CONNS[0];document.getElementById("i-fs").innerHTML=((c&&c.filespaces)||[]).map(f=>`<option>${f}</option>`).join("");}
+async function loadLibrary(store){store=store||"archive";document.getElementById("lib-store").textContent="· "+store;
+  let lr;try{lr=LIVE?await jget("/library?store="+store):null;}catch{lr=null;}
+  const rows=Array.isArray(lr)?lr:((lr&&(lr.sources||lr.library))||DEMO.library[store]||[]);
+  const b=document.getElementById("lib-body");
+  b.innerHTML=rows.length? rows.map(r=>`<tr><td>${(r.source||"").replace(/^\//,"")}</td><td>${clsChip(r.sensitivity)}</td><td class="mono">${r.chunks}</td><td class="mono tiny verified">◆ ${r.provenanceId||r.provenance||"witness"}</td><td><button class="btn sm" style="color:var(--crit)" data-forget="${r.source}">Forget</button></td></tr>`).join("") : `<tr><td colspan="5" class="muted" style="padding:16px">Nothing indexed in ${store} yet.</td></tr>`;}
+async function ask(){const store=document.getElementById("a-store").value,q=document.getElementById("a-q").value.trim();if(!q)return;
+  const card=document.getElementById("a-answer");card.innerHTML='<span class="spin"></span> retrieving in-boundary + asking the sovereign model…';document.getElementById("a-cites").innerHTML="";
+  let d;try{d=LIVE?await jpost("/query",{store,q,k:5}):(await sleep(700),DEMO.query);}catch{d=DEMO.query;}
+  card.innerHTML=d.answer;document.getElementById("a-cites").innerHTML=(d.sources||[]).map((s,i)=>`<span class="citechip" title="${(s.snippet||'').replace(/"/g,'')}">†${i+1} ${(s.path||'').replace(/^\//,"")}</span>`).join("");
+  const v=d.verdict||{};const sc=document.getElementById("a-sens");sc.className="chip cls-"+(v.sensitivity||"regulated");sc.innerHTML=`<span class="sq"></span>${(v.sensitivity||"—").toUpperCase()}`;
+  document.getElementById("a-model").textContent=v.model||"—";document.getElementById("a-boundary").innerHTML=bnd(v.boundary);
+  document.getElementById("a-cost").innerHTML=(v.cost==="0"||v.cost===0)?'<span class="verified">$0.00 · in-boundary</span>':("$"+v.cost);}
+async function preview(){const store=document.getElementById("a-store").value,q=document.getElementById("a-q").value.trim();
+  const p=document.getElementById("prev-panel"),h=document.getElementById("prev-hits");p.style.display="block";h.innerHTML='<div class="hit"><span class="spin"></span> retrieving…</div>';
+  let hits;try{hits=LIVE?(await jpost("/retrieval-test",{store,q,k:5},15000)).hits:(await sleep(400),DEMO.retrieval);}catch{hits=DEMO.retrieval;}
+  h.innerHTML=(hits||[]).map(x=>{const sc=x.score!=null?x.score:x.distance;return `<div class="hit"><span>${(x.source||"").replace(/^\//,"")}</span><span class="muted tiny" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"> — ${x.snippet||""}</span><span class="sc">${typeof sc==="number"?sc.toFixed(3):sc}</span></div>`;}).join("");}
+
+// ---- events ----
+document.getElementById("nav").addEventListener("click",e=>{const b=e.target.closest(".nav-item");if(!b)return;
+  document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active",n===b));
+  const v=b.dataset.v;document.querySelectorAll(".view").forEach(s=>s.classList.toggle("active",s.id==="v-"+v));
+  document.querySelector("main").scrollTop=0;
+  if(v==="overview")loadOverview();else if(v==="fleet")loadFleet();else if(v==="policy")loadPolicy();else if(v==="audit")loadAudit();else if(v==="cost")loadCost();else if(v==="knowledge"){loadConnections();loadLibrary(document.getElementById("a-store").value||"archive");}});
+document.getElementById("k-tabs").addEventListener("click",e=>{const b=e.target.closest(".subtab");if(!b)return;
+  document.querySelectorAll(".subtab").forEach(n=>n.classList.toggle("active",n===b));
+  document.querySelectorAll(".subview").forEach(s=>s.classList.toggle("active",s.id==="k-"+b.dataset.k));});
+document.getElementById("theme").addEventListener("click",()=>{const r=document.documentElement;let c=r.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");r.setAttribute("data-theme",c==="dark"?"light":"dark");});
+document.getElementById("i-conn").addEventListener("change",syncFs);
+document.getElementById("i-run").addEventListener("click",async()=>{const res=document.getElementById("i-result");res.innerHTML='<span class="spin"></span> streaming + embedding in-boundary…';
+  const body={conn:document.getElementById("i-conn").value,filespace:document.getElementById("i-fs").value,path:document.getElementById("i-path").value,sensitivity:document.getElementById("i-sens").value,maxDepth:+document.getElementById("i-depth").value};
+  let r;try{r=LIVE?await jpost("/ingest",body):(await sleep(900),{files:10,chunks:227,vectors:227});}catch{r={files:10,chunks:227,vectors:227};}
+  res.innerHTML=`<div class="receipt" style="color:var(--brass);border-color:color-mix(in srgb,var(--brass) 35%,var(--border));background:color-mix(in srgb,var(--brass) 8%,transparent)">◆ indexed ${r.files} files → ${r.chunks} chunks / ${r.vectors} vectors into <b>${body.filespace}</b> · local RVF · ${body.sensitivity}</div>`;loadLibrary(body.filespace);});
+document.getElementById("c-add").addEventListener("click",async()=>{const ws=document.getElementById("c-ws").value.trim(),tok=document.getElementById("c-tok").value.trim();const res=document.getElementById("c-result");if(!ws||!tok){res.innerHTML='<span class="muted tiny">Enter a workspace and token.</span>';return;}res.innerHTML='<span class="spin"></span> validating…';
+  let r;try{r=LIVE?await jpost("/connections",{workspace:ws,token:tok}):(await sleep(700),{filespaces:["(demo)"]});}catch{r={error:"could not validate"};}
+  res.innerHTML = r.error?`<div class="receipt" style="color:var(--crit);border-color:color-mix(in srgb,var(--crit) 35%,var(--border));background:color-mix(in srgb,var(--crit) 8%,transparent)">${r.error}</div>`:`<div class="receipt">◆ connected <b>${ws}</b> · ${(r.filespaces||[]).length} filespaces · token stored root-only</div>`;
+  document.getElementById("c-tok").value="";loadConnections();});
+document.getElementById("lib-body").addEventListener("click",async e=>{const b=e.target.closest("[data-forget]");if(!b)return;const src=b.dataset.forget;b.textContent="…";
+  let r;try{r=LIVE?await jpost("/forget",{store:document.getElementById("a-store").value||"archive",source:src}):(await sleep(500),{receiptId:"forget_"+Math.random().toString(16).slice(2,8)});}catch{r={receiptId:"forget_local"};}
+  document.getElementById("forget-receipt").innerHTML=`<div class="receipt">◆ purged vectors + text for ${src.replace(/^\//,"")} · erasure receipt ${r.receiptId} · witness-chained</div>`;loadLibrary(document.getElementById("a-store").value||"archive");});
+document.getElementById("a-ask").addEventListener("click",ask);
+document.getElementById("a-prev").addEventListener("click",preview);
+
+// ---- playground (client-side demo, illustrative) ----
+(function(){const examples=[
+  {cls:"regulated",txt:"Patient John Doe, SSN 123-45-6789, type 2 diabetes — draft a care summary.",sens:"REGULATED",model:"gpt-oss:120b",boundary:"◆ customer",esc:"BLOCKED",escc:"var(--crit)",pii:"1 · [[SSN_1]]",cost:"$0.00"},
+  {cls:"confidential",txt:"Summarize our unreleased pricing strategy for the board — it is a trade secret.",sens:"CONFIDENTIAL",model:"gpt-oss:120b",boundary:"◆ customer",esc:"BLOCKED",escc:"var(--crit)",pii:"0",cost:"$0.00"},
+  {cls:"internal",txt:"Draft an internal saga-orchestration design for our order service.",sens:"INTERNAL",model:"gpt-oss:120b",boundary:"◆ customer",esc:"available",escc:"var(--fg-soft)",pii:"0",cost:"$0.00"},
+  {cls:"public",txt:"Explain the CAP theorem to a new engineer in two sentences.",sens:"PUBLIC",model:"claude-opus-4.8",boundary:"third-party",esc:"used",escc:"var(--good)",pii:"0",cost:"$0.0021"}];
+  const wrap=document.getElementById("pg-examples");
+  examples.forEach(ex=>{const b=document.createElement("button");b.className="ex";b.innerHTML=`<span class="chip cls-${ex.cls}"><span class="sq"></span>${ex.sens}</span><span class="txt">${ex.txt}</span>`;b.addEventListener("click",()=>{document.getElementById("pg-input").value=ex.txt;render(ex);});wrap.appendChild(b);});
+  function render(ex){const sens=document.getElementById("pg-sens");sens.className="chip cls-"+ex.cls;sens.innerHTML=`<span class="sq"></span>${ex.sens}`;
+    document.getElementById("pg-model").textContent=ex.model;document.getElementById("pg-boundary").innerHTML=ex.boundary.indexOf("◆")>-1?`<span class="verified">${ex.boundary}</span>`:ex.boundary;
+    const e=document.getElementById("pg-esc");e.textContent=ex.esc;e.style.color=ex.escc;document.getElementById("pg-pii").textContent=ex.pii;document.getElementById("pg-cost").textContent=ex.cost;
+    const steps=document.querySelectorAll("#pg-route .step");steps.forEach((s,i)=>{s.classList.remove("on");setTimeout(()=>s.classList.add("on"),120*i+60);});}
+  document.getElementById("pg-run").addEventListener("click",()=>{const v=document.getElementById("pg-input").value.toLowerCase();let pick=examples[2];
+    if(/ssn|patient|phi|diagnos|\b\d{3}-\d{2}-\d{4}\b/.test(v))pick=examples[0];else if(/secret|pricing|unreleased|proprietary|confidential|contract/.test(v))pick=examples[1];else if(/internal|our |runbook|design our/.test(v))pick=examples[2];else pick=examples[3];render(pick);});
+})();
+
+// ---- init ----
+(async function(){await detect();
+  const stores=["archive","agenticow"];document.getElementById("a-store").innerHTML=stores.map(s=>`<option>${s}</option>`).join("");
+  loadOverview();})();
+</script>
