@@ -16,6 +16,6 @@ python3 -m http.server 8000   # then open http://localhost:8000
 
 ## Contact
 
-Early access & demos: **john@greatfallsventures.com**
+Early access & demos: **john@mckinleylabsllc.com**
 
 © 2026 Great Falls Ventures.
